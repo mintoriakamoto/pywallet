@@ -116,8 +116,12 @@ def load_wallet():
     manager = WalletManager.get_instance()
     try:
         session_id = manager.load_wallet(ticker, dat_path, passphrase, label)
-    except (ValueError, RuntimeError) as exc:
-        return _json_err(str(exc))
+    except ValueError as exc:
+        logger.warning("load_wallet validation error: %s", exc)
+        return _json_err("Invalid request: {}".format(exc))
+    except RuntimeError as exc:
+        logger.warning("load_wallet runtime error: %s", exc)
+        return _json_err("Could not load wallet. Check the path, coin, and passphrase.")
     except Exception:
         logger.exception("Unexpected error loading wallet")
         return _json_err("Internal server error", 500)
