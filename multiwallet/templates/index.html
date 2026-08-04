@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MultiWallet — Exodus-style Multi-Coin Wallet</title>
+  <style>
+    /* ── Reset & base ────────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg:        #1a1b2e;
+      --panel:     #16213e;
+      --card:      #0f3460;
+      --accent:    #e94560;
+      --accent2:   #53d8fb;
+      --text:      #e0e0e0;
+      --muted:     #8892a4;
+      --success:   #4caf50;
+      --warning:   #ff9800;
+      --border:    rgba(255,255,255,0.08);
+      --radius:    12px;
+    }
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      overflow-x: hidden;
+    }
+
+    /* ── Sidebar ─────────────────────────────────────────────────────── */
+    #sidebar {
+      width: 220px;
+      min-width: 220px;
+      background: var(--panel);
+      display: flex;
+      flex-direction: column;
+      border-right: 1px solid var(--border);
+      height: 100vh;
+      position: sticky;
+      top: 0;
+      overflow-y: auto;
+    }
+    .logo {
+      padding: 24px 20px 16px;
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--accent2);
+      letter-spacing: 1px;
+    }
+    .logo span { color: var(--accent); }
+    .nav-section {
+      padding: 8px 12px 4px;
+      font-size: 0.68rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--muted);
+    }
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 20px;
+      cursor: pointer;
+      border-radius: var(--radius);
+      margin: 2px 8px;
+      transition: background 0.15s;
+      font-size: 0.92rem;
+    }
+    .nav-item:hover { background: rgba(255,255,255,0.06); }
+    .nav-item.active { background: var(--accent); color: #fff; }
+    .coin-badge {
+      margin-left: auto;
+      background: var(--card);
+      padding: 1px 7px;
+      border-radius: 20px;
+      font-size: 0.72rem;
+      color: var(--accent2);
+    }
+    .nav-item.active .coin-badge { background: rgba(0,0,0,0.2); color: #fff; }
+
+    /* ── Main area ───────────────────────────────────────────────────── */
+    #main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      background: var(--bg);
+    }
+
+    /* ── Top-bar ─────────────────────────────────────────────────────── */
+    #topbar {
+      display: flex;
+      align-items: center;
+      padding: 18px 28px;
+      border-bottom: 1px solid var(--border);
+      gap: 12px;
+    }
+    #topbar h1 { font-size: 1.2rem; font-weight: 600; flex: 1; }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 16px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.88rem;
+      font-weight: 600;
+      transition: opacity 0.15s;
+    }
+    .btn:hover { opacity: 0.85; }
+    .btn-accent  { background: var(--accent);  color: #fff; }
+    .btn-accent2 { background: var(--accent2); color: #000; }
+    .btn-muted   { background: rgba(255,255,255,0.08); color: var(--text); }
+
+    /* ── Content ─────────────────────────────────────────────────────── */
+    #content { flex: 1; padding: 24px 28px; }
+
+    /* ── Cards / panels ──────────────────────────────────────────────── */
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+    .card-title {
+      font-size: 0.82rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--muted);
+      margin-bottom: 14px;
+    }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+
+    /* ── Stat tiles ──────────────────────────────────────────────────── */
+    .stat-tile {
+      background: var(--card);
+      border-radius: var(--radius);
+      padding: 18px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .stat-tile .label { font-size: 0.75rem; color: var(--muted); }
+    .stat-tile .value { font-size: 1.6rem; font-weight: 700; color: var(--accent2); }
+    .stat-tile .sub   { font-size: 0.78rem; color: var(--muted); }
+
+    /* ── Wallet list ─────────────────────────────────────────────────── */
+    .wallet-row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .wallet-row:last-child { border-bottom: none; }
+    .wallet-icon {
+      width: 38px; height: 38px;
+      border-radius: 50%;
+      background: var(--card);
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: 0.8rem; color: var(--accent2);
+      flex-shrink: 0;
+    }
+    .wallet-info { flex: 1; min-width: 0; }
+    .wallet-name { font-size: 0.95rem; font-weight: 600; }
+    .wallet-sub  { font-size: 0.75rem; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .wallet-actions { display: flex; gap: 6px; }
+    .tag {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 20px;
+      font-size: 0.7rem;
+      font-weight: 600;
+    }
+    .tag-green { background: rgba(76,175,80,0.15); color: var(--success); }
+    .tag-red   { background: rgba(233,69,96,0.15);  color: var(--accent); }
+    .tag-blue  { background: rgba(83,216,251,0.15); color: var(--accent2); }
+
+    /* ── Address pool table ──────────────────────────────────────────── */
+    table { width: 100%; border-collapse: collapse; font-size: 0.84rem; }
+    th {
+      text-align: left; padding: 8px 10px;
+      color: var(--muted); font-weight: 600;
+      border-bottom: 1px solid var(--border);
+    }
+    td { padding: 8px 10px; border-bottom: 1px solid var(--border); word-break: break-all; }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: rgba(255,255,255,0.03); }
+
+    /* ── Modal ───────────────────────────────────────────────────────── */
+    .modal-overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.7);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 1000;
+    }
+    .modal {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px;
+      width: 480px;
+      max-width: 95vw;
+    }
+    .modal h2 { margin-bottom: 18px; font-size: 1.1rem; }
+    .form-group { margin-bottom: 14px; }
+    .form-group label { display: block; margin-bottom: 5px; font-size: 0.82rem; color: var(--muted); }
+    .form-group input, .form-group select {
+      width: 100%;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 9px 12px;
+      color: var(--text);
+      font-size: 0.9rem;
+    }
+    .form-group input:focus, .form-group select:focus {
+      outline: none;
+      border-color: var(--accent2);
+    }
+    .modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; }
+
+    /* ── Toast ───────────────────────────────────────────────────────── */
+    #toast {
+      position: fixed; bottom: 28px; right: 28px;
+      background: var(--card);
+      border-left: 4px solid var(--accent2);
+      padding: 14px 20px;
+      border-radius: 8px;
+      font-size: 0.88rem;
+      max-width: 340px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+      transition: opacity 0.3s;
+      z-index: 2000;
+      opacity: 0;
+      pointer-events: none;
+    }
+    #toast.show { opacity: 1; pointer-events: auto; }
+    #toast.error { border-color: var(--accent); }
+
+    /* ── Misc ─────────────────────────────────────────────────────────── */
+    .mono { font-family: 'Courier New', monospace; font-size: 0.8rem; }
+    .hidden { display: none !important; }
+    .flex-center { display: flex; align-items: center; justify-content: center; }
+    .spacer { flex: 1; }
+    #loading-spinner {
+      text-align: center; padding: 60px;
+      color: var(--muted);
+    }
+    select option { background: var(--panel); }
+  </style>
+</head>
+<body>
+
+<!-- ── Sidebar ────────────────────────────────────────────────────────── -->
+<nav id="sidebar">
+  <div class="logo">Multi<span>Wallet</span></div>
+
+  <div class="nav-section">Overview</div>
+  <div class="nav-item active" data-view="dashboard" onclick="showView('dashboard', this)">
+    📊 Dashboard
+  </div>
+
+  <div class="nav-section">Wallets</div>
+  <div id="coin-nav">
+    <!-- injected per loaded coin -->
+    <div class="nav-item" data-view="all-wallets" onclick="showView('all-wallets', this)">
+      🗂 All Wallets
+    </div>
+  </div>
+
+  <div class="nav-section">Network</div>
+  <div class="nav-item" data-view="coins" onclick="showView('coins', this)">
+    🌐 Coin Registry
+  </div>
+</nav>
+
+<!-- ── Main ──────────────────────────────────────────────────────────── -->
+<div id="main">
+  <div id="topbar">
+    <h1 id="view-title">Dashboard</h1>
+    <button class="btn btn-accent" onclick="openLoadModal()">＋ Load Wallet</button>
+    <button class="btn btn-muted" onclick="refreshAll()">⟳ Refresh</button>
+  </div>
+
+  <div id="content">
+    <!-- Dashboard -->
+    <div id="view-dashboard">
+      <div id="loading-spinner">Loading wallet data…</div>
+      <div id="dashboard-content" class="hidden">
+        <div class="grid-3" id="stat-tiles" style="margin-bottom:20px"></div>
+        <div class="card">
+          <div class="card-title">Loaded Wallets</div>
+          <div id="wallet-list-all"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- All wallets -->
+    <div id="view-all-wallets" class="hidden">
+      <div class="card">
+        <div class="card-title">All Sessions</div>
+        <div id="all-sessions-table"></div>
+      </div>
+    </div>
+
+    <!-- Per-coin wallet view (dynamically shown) -->
+    <div id="view-coin" class="hidden">
+      <div class="card">
+        <div class="card-title" id="coin-view-title">Wallets</div>
+        <div id="coin-sessions"></div>
+      </div>
+      <div class="card" id="coin-address-pool-card">
+        <div class="card-title">Address / Change Pool</div>
+        <div id="coin-address-pool"></div>
+      </div>
+    </div>
+
+    <!-- Coin registry -->
+    <div id="view-coins" class="hidden">
+      <div class="card">
+        <div class="card-title">Registered Coins <span id="coin-count" style="color:var(--accent2)"></span></div>
+        <table id="coins-table">
+          <thead>
+            <tr>
+              <th>Ticker</th><th>Name</th><th>Algo</th>
+              <th>PubKey Ver</th><th>WIF Ver</th><th>Bech32</th><th>BIP44</th>
+            </tr>
+          </thead>
+          <tbody id="coins-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Load Wallet Modal ────────────────────────────────────────────── -->
+<div id="load-modal" class="modal-overlay hidden">
+  <div class="modal">
+    <h2>Load Wallet</h2>
+    <div class="form-group">
+      <label>Coin</label>
+      <select id="load-ticker">
+        <option value="">Select coin…</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>wallet.dat path (server-side absolute path)</label>
+      <input id="load-path" type="text" placeholder="/home/user/.bitcoin/wallet.dat"/>
+    </div>
+    <div class="form-group">
+      <label>Label (optional)</label>
+      <input id="load-label" type="text" placeholder="My main wallet"/>
+    </div>
+    <div class="form-group">
+      <label>Passphrase (if encrypted)</label>
+      <input id="load-pass" type="password" placeholder="Leave blank if not encrypted"/>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-muted" onclick="closeModal('load-modal')">Cancel</button>
+      <button class="btn btn-accent" onclick="submitLoadWallet()">Load</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── Change Address Modal ─────────────────────────────────────────── -->
+<div id="change-modal" class="modal-overlay hidden">
+  <div class="modal">
+    <h2>Next Change Address</h2>
+    <p style="margin-bottom:14px;color:var(--muted);font-size:0.88rem">
+      Use this address to receive change when sending from this wallet.
+    </p>
+    <div class="card" style="background:var(--card)">
+      <div class="mono" id="change-addr-display" style="word-break:break-all;font-size:1rem"></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-muted" onclick="closeModal('change-modal')">Close</button>
+      <button class="btn btn-accent2" onclick="copyChangeAddr()">📋 Copy</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── Toast ─────────────────────────────────────────────────────────── -->
+<div id="toast"></div>
+
+<!-- ── App JS ────────────────────────────────────────────────────────── -->
+<script>
+'use strict';
+
+// ── State ─────────────────────────────────────────────────────────────
+let _coins   = {};   // ticker -> coin_info
+let _wallets = {};   // ticker -> [session, ...]
+let _currentTicker  = null;
+let _currentSession = null;
+
+// ── Utilities ─────────────────────────────────────────────────────────
+async function api(url, opts = {}) {
+  const res = await fetch(url, {
+    headers: { 'Content-Type': 'application/json' },
+    ...opts,
+  });
+  return res.json();
+}
+
+function toast(msg, isError = false) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'show' + (isError ? ' error' : '');
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => { t.className = ''; }, 3500);
+}
+
+function hex(n) { return '0x' + n.toString(16).padStart(2, '0').toUpperCase(); }
+
+// ── Views ─────────────────────────────────────────────────────────────
+function showView(name, navEl) {
+  document.querySelectorAll('[id^="view-"]').forEach(el => el.classList.add('hidden'));
+
+  if (name.startsWith('coin-')) {
+    _currentTicker = name.slice(5);
+    renderCoinView(_currentTicker);
+    document.getElementById('view-coin').classList.remove('hidden');
+    document.getElementById('view-title').textContent = _currentTicker + ' Wallets';
+  } else {
+    const el = document.getElementById('view-' + name);
+    if (el) el.classList.remove('hidden');
+    document.getElementById('view-title').textContent = {
+      dashboard: 'Dashboard',
+      'all-wallets': 'All Sessions',
+      coins: 'Coin Registry',
+    }[name] || name;
+    if (name === 'coins') renderCoinsTable();
+    if (name === 'dashboard') renderDashboard();
+    if (name === 'all-wallets') renderAllSessions();
+  }
+
+  document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+  if (navEl) navEl.classList.add('active');
+}
+
+// ── Load data ─────────────────────────────────────────────────────────
+async function refreshAll() {
+  const [coinData, walletData] = await Promise.all([
+    api('/api/coins'),
+    api('/api/wallets'),
+  ]);
+  if (coinData.ok)   _coins   = coinData.coins;
+  if (walletData.ok) _wallets = walletData.loaded_coins;
+  updateCoinNav();
+  populateCoinSelector();
+  renderDashboard();
+}
+
+function updateCoinNav() {
+  const nav = document.getElementById('coin-nav');
+  // keep the All Wallets item
+  const allItem = nav.querySelector('[data-view="all-wallets"]');
+  nav.innerHTML = '';
+  if (allItem) nav.appendChild(allItem);
+
+  Object.keys(_wallets).forEach(ticker => {
+    const sessions = _wallets[ticker];
+    const div = document.createElement('div');
+    div.className = 'nav-item';
+    div.dataset.view = 'coin-' + ticker;
+    div.innerHTML = `<span>${ticker}</span><span class="coin-badge">${sessions.length}</span>`;
+    div.onclick = function() { showView('coin-' + ticker, div); };
+    nav.appendChild(div);
+  });
+}
+
+function populateCoinSelector() {
+  const sel = document.getElementById('load-ticker');
+  const cur = sel.value;
+  sel.innerHTML = '<option value="">Select coin…</option>';
+  Object.keys(_coins).sort().forEach(t => {
+    const opt = document.createElement('option');
+    opt.value = t;
+    opt.textContent = t + ' — ' + (_coins[t].name || '');
+    sel.appendChild(opt);
+  });
+  if (cur) sel.value = cur;
+}
+
+// ── Dashboard ─────────────────────────────────────────────────────────
+function renderDashboard() {
+  document.getElementById('loading-spinner').classList.add('hidden');
+  const content = document.getElementById('dashboard-content');
+  content.classList.remove('hidden');
+
+  const totalCoins = Object.keys(_wallets).length;
+  const totalSessions = Object.values(_wallets).reduce((s, a) => s + a.length, 0);
+  const totalKeys = Object.values(_wallets).reduce((s, a) =>
+    s + a.reduce((ss, sess) => ss + (sess.key_count || 0), 0), 0);
+
+  document.getElementById('stat-tiles').innerHTML = `
+    <div class="stat-tile">
+      <div class="label">Loaded Coins</div>
+      <div class="value">${totalCoins}</div>
+      <div class="sub">distinct coins</div>
+    </div>
+    <div class="stat-tile">
+      <div class="label">Wallet Sessions</div>
+      <div class="value">${totalSessions}</div>
+      <div class="sub">wallet.dat files loaded</div>
+    </div>
+    <div class="stat-tile">
+      <div class="label">Total Keys</div>
+      <div class="value">${totalKeys}</div>
+      <div class="sub">across all wallets</div>
+    </div>
+  `;
+
+  const list = document.getElementById('wallet-list-all');
+  if (totalSessions === 0) {
+    list.innerHTML = '<div style="color:var(--muted);padding:16px 0">No wallets loaded yet. Click <strong>+ Load Wallet</strong> to start.</div>';
+    return;
+  }
+  list.innerHTML = Object.entries(_wallets).map(([ticker, sessions]) =>
+    sessions.map(s => walletRowHTML(ticker, s)).join('')
+  ).join('');
+}
+
+function walletRowHTML(ticker, session) {
+  const initials = ticker.slice(0, 3);
+  return `
+    <div class="wallet-row">
+      <div class="wallet-icon">${initials}</div>
+      <div class="wallet-info">
+        <div class="wallet-name">${session.label || ticker}</div>
+        <div class="wallet-sub mono">${session.dat_path}</div>
+      </div>
+      <span class="tag tag-${session.loaded ? 'green' : 'red'}">${session.loaded ? 'loaded' : 'error'}</span>
+      <span class="tag tag-blue">${session.key_count} keys</span>
+      <div class="wallet-actions">
+        <button class="btn btn-accent2" style="padding:5px 10px;font-size:0.8rem"
+          onclick="getChangeAddr('${ticker}','${session.session_id}')">Change Addr</button>
+        <button class="btn btn-muted" style="padding:5px 10px;font-size:0.8rem"
+          onclick="unloadWallet('${ticker}','${session.session_id}')">Unload</button>
+      </div>
+    </div>`;
+}
+
+// ── All sessions ──────────────────────────────────────────────────────
+function renderAllSessions() {
+  const container = document.getElementById('all-sessions-table');
+  const all = [];
+  Object.entries(_wallets).forEach(([ticker, sessions]) =>
+    sessions.forEach(s => all.push({ ticker, ...s }))
+  );
+  if (all.length === 0) {
+    container.innerHTML = '<div style="color:var(--muted);padding:16px 0">No wallets loaded.</div>';
+    return;
+  }
+  container.innerHTML = `
+    <table>
+      <thead><tr><th>Coin</th><th>Label</th><th>Keys</th><th>Status</th><th>Session ID</th><th>Actions</th></tr></thead>
+      <tbody>${all.map(s => `
+        <tr>
+          <td><strong>${s.ticker}</strong></td>
+          <td>${s.label}</td>
+          <td>${s.key_count}</td>
+          <td><span class="tag tag-${s.loaded ? 'green' : 'red'}">${s.loaded ? 'loaded' : 'error'}</span></td>
+          <td class="mono" style="font-size:0.72rem">${s.session_id}</td>
+          <td>
+            <button class="btn btn-accent2" style="padding:4px 8px;font-size:0.75rem"
+              onclick="getChangeAddr('${s.ticker}','${s.session_id}')">Change Addr</button>
+            <button class="btn btn-muted" style="padding:4px 8px;font-size:0.75rem"
+              onclick="unloadWallet('${s.ticker}','${s.session_id}')">Unload</button>
+          </td>
+        </tr>`).join('')}
+      </tbody>
+    </table>`;
+}
+
+// ── Per-coin view ─────────────────────────────────────────────────────
+async function renderCoinView(ticker) {
+  const data = await api(`/api/wallets/${ticker}`);
+  if (!data.ok) { toast('Could not load coin data', true); return; }
+
+  document.getElementById('coin-view-title').textContent = `${ticker} — ${data.coin_info?.name || ''}`;
+
+  const sessionsHTML = (data.sessions || []).map(s => walletRowHTML(ticker, s)).join('');
+  document.getElementById('coin-sessions').innerHTML = sessionsHTML || '<div style="color:var(--muted)">No sessions loaded for this coin.</div>';
+
+  // Show first session's address pool
+  if (data.sessions && data.sessions.length > 0) {
+    renderAddressPool(data.sessions[0]);
+  }
+}
+
+function renderAddressPool(session) {
+  const pool = session.change_pool || [];
+  if (pool.length === 0) {
+    document.getElementById('coin-address-pool').innerHTML = '<div style="color:var(--muted)">No addresses in pool.</div>';
+    return;
+  }
+  document.getElementById('coin-address-pool').innerHTML = `
+    <div style="margin-bottom:10px;color:var(--muted);font-size:0.82rem">
+      Session: <span class="mono">${session.session_id}</span>
+      &nbsp;|&nbsp; ${pool.length} keys
+    </div>
+    <table>
+      <thead><tr><th>Address</th><th>Label</th><th>Change</th><th>Used</th></tr></thead>
+      <tbody>${pool.map(k => `
+        <tr>
+          <td class="mono">${k.address}</td>
+          <td>${k.label || ''}</td>
+          <td>${k.is_change ? '<span class="tag tag-blue">yes</span>' : ''}</td>
+          <td>${k.used ? '<span class="tag tag-red">used</span>' : '<span class="tag tag-green">free</span>'}</td>
+        </tr>`).join('')}
+      </tbody>
+    </table>`;
+}
+
+// ── Coin registry table ───────────────────────────────────────────────
+function renderCoinsTable() {
+  const tbody = document.getElementById('coins-tbody');
+  const entries = Object.entries(_coins);
+  document.getElementById('coin-count').textContent = `(${entries.length} coins)`;
+  tbody.innerHTML = entries.sort(([a],[b]) => a.localeCompare(b)).map(([t, c]) => `
+    <tr>
+      <td><strong>${t}</strong></td>
+      <td>${c.name}</td>
+      <td>${c.algorithm || '—'}</td>
+      <td class="mono">${hex(c.pubkey_ver)}</td>
+      <td class="mono">${hex(c.wif_ver)}</td>
+      <td>${c.bech32_hrp || '—'}</td>
+      <td>${c.bip44_index != null ? c.bip44_index : '—'}</td>
+    </tr>`).join('');
+}
+
+// ── Load wallet modal ─────────────────────────────────────────────────
+function openLoadModal() {
+  document.getElementById('load-modal').classList.remove('hidden');
+}
+function closeModal(id) {
+  document.getElementById(id).classList.add('hidden');
+}
+async function submitLoadWallet() {
+  const ticker     = document.getElementById('load-ticker').value.trim();
+  const dat_path   = document.getElementById('load-path').value.trim();
+  const label      = document.getElementById('load-label').value.trim();
+  const passphrase = document.getElementById('load-pass').value;
+
+  if (!ticker || !dat_path) {
+    toast('Coin and wallet path are required', true);
+    return;
+  }
+
+  const res = await api('/api/wallets/load', {
+    method: 'POST',
+    body: JSON.stringify({ ticker, dat_path, label: label || undefined, passphrase: passphrase || undefined }),
+  });
+
+  if (res.ok) {
+    toast(`Loaded ${ticker} wallet (session: ${res.session_id})`);
+    closeModal('load-modal');
+    await refreshAll();
+  } else {
+    toast(res.error || 'Failed to load wallet', true);
+  }
+}
+
+// ── Unload wallet ─────────────────────────────────────────────────────
+async function unloadWallet(ticker, sessionId) {
+  if (!confirm(`Unload session ${sessionId}?`)) return;
+  const res = await api('/api/wallets/unload', {
+    method: 'POST',
+    body: JSON.stringify({ ticker, session_id: sessionId }),
+  });
+  if (res.ok) {
+    toast('Wallet unloaded');
+    await refreshAll();
+    showView('dashboard', document.querySelector('[data-view="dashboard"]'));
+  } else {
+    toast(res.error || 'Failed to unload', true);
+  }
+}
+
+// ── Change address ────────────────────────────────────────────────────
+async function getChangeAddr(ticker, sessionId) {
+  const res = await api(`/api/wallets/${ticker}/${sessionId}/change_address`);
+  if (res.ok) {
+    document.getElementById('change-addr-display').textContent = res.address;
+    document.getElementById('change-modal').classList.remove('hidden');
+  } else {
+    toast(res.error || 'No change address available', true);
+  }
+}
+function copyChangeAddr() {
+  const addr = document.getElementById('change-addr-display').textContent;
+  navigator.clipboard.writeText(addr).then(() => toast('Copied to clipboard'));
+}
+
+// ── Init ──────────────────────────────────────────────────────────────
+refreshAll();
+</script>
+</body>
+</html>

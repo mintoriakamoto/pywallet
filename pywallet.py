@@ -40,9 +40,83 @@ import random
 import math
 
 addrtype = 0
+wif_prefix = 0x80
 json_db = {}
 private_keys = []
 password = None
+
+# Network parameters for Bitcoin-derived coins that use Berkeley DB wallet.dat format.
+# Format: 'TICKER': (full_name, pubkey_version, wif_version, p2sh_version, bech32_hrp)
+# p2sh_version=None  -> P2SH address type unknown / not applicable
+# bech32_hrp=None    -> native segwit not supported by this coin
+# Note: coins with 2-byte address prefixes (ZEC, ZCL, FLUX, BTCZ, ZEN, ANON …)
+#       are not supported by this tool's single-byte architecture.
+# Note: coins with non-Bitcoin hashing (GRS uses Groestl, XMR/ETH/ETC/KAS/ERGO …)
+#       will produce incorrect addresses even when WIF decoding works.
+COIN_PARAMS = {
+    # ── Major PoW coins ──────────────────────────────────────────────────────
+    'BTC':   ('Bitcoin',           0x00, 0x80, 0x05, 'bc'),
+    'LTC':   ('Litecoin',          0x30, 0xb0, 0x32, 'ltc'),
+    'DOGE':  ('Dogecoin',          0x1e, 0x9e, 0x16, None),
+    'DASH':  ('Dash',              0x4c, 0xcc, 0x10, None),
+    'VTC':   ('Vertcoin',          0x47, 0xc7, 0x05, 'vtc'),
+    'BTG':   ('Bitcoin Gold',      0x26, 0xa6, 0x17, 'btg'),
+    'RVN':   ('Ravencoin',         0x3c, 0x80, 0x7a, None),
+    'DGB':   ('DigiByte',          0x1e, 0x9e, 0x3f, 'dgb'),
+    'XVG':   ('Verge',             0x1e, 0x9e, 0x21, None),
+    'MONA':  ('Monacoin',          0x32, 0xb2, 0x05, 'mona'),
+    'GRS':   ('Groestlcoin',       0x24, 0x80, 0x05, 'grs'),
+    'FIRO':  ('Firo',              0x52, 0xd2, 0x07, None),
+    'XZC':   ('Zcoin',             0x52, 0xd2, 0x07, None),
+    'BTX':   ('Bitcore',           0x03, 0x83, 0x08, 'btx'),
+    'PIVX':  ('PIVX',              0x1e, 0xd4, 0x0d, None),
+    'KMD':   ('Komodo',            0x3c, 0xbc, 0x55, None),
+    'VIA':   ('Viacoin',           0x47, 0xc7, 0x21, 'via'),
+    'SYS':   ('Syscoin',           0x3f, 0xbf, 0x05, 'sys'),
+    'QTUM':  ('Qtum',              0x3a, 0x80, 0x32, 'qc'),
+    'RTM':   ('Raptoreum',         0x3c, 0xbc, 0x10, None),
+    # ── Classic / historic altcoins ──────────────────────────────────────────
+    'PPC':   ('Peercoin',          0x37, 0xb7, 0x75, None),
+    'NMC':   ('Namecoin',          0x34, 0xb4, 0x0d, None),
+    'NVC':   ('Novacoin',          0x08, 0x88, 0x14, None),
+    'FTC':   ('Feathercoin',       0x0e, 0x8e, 0x05, 'fc'),
+    'AUR':   ('Auroracoin',        0x17, 0x97, 0x05, None),
+    'XPM':   ('Primecoin',         0x17, 0x97, 0x53, None),
+    'FLO':   ('Florincoin',        0x23, 0xa3, 0x08, None),
+    'RDD':   ('Reddcoin',          0x3d, 0xbd, 0x05, None),
+    'POT':   ('Potcoin',           0x37, 0xb7, 0x05, None),
+    'EMC2':  ('Einsteinium',       0x21, 0xa1, 0x05, None),
+    'BLK':   ('Blackcoin',         0x19, 0x99, 0x55, None),
+    'QRK':   ('Quarkcoin',         0x3a, 0xba, None,  None),
+    'IXC':   ('Ixcoin',            0x8a, 0x80, None,  None),
+    'CLAM':  ('Clams',             0x89, 0x85, 0xcd, None),
+    'DMD':   ('Diamond',           0x5a, 0xda, 0x08, None),
+    'MEC':   ('Megacoin',          0x32, 0xb2, None,  None),
+    'NLG':   ('Gulden',            0x26, 0xa6, None,  None),
+    'VRC':   ('Vericoin',          0x46, 0xc6, None,  None),
+    # ── Mid-tier altcoins ────────────────────────────────────────────────────
+    'XMY':   ('Myriadcoin',        0x32, 0xb2, 0x09, 'my'),
+    'MYR':   ('Myriadcoin',        0x32, 0xb2, 0x09, 'my'),
+    'PHR':   ('Phore',             0x37, 0xb7, 0x0d, None),
+    'SMART': ('SmartCash',         0x3f, 0xbf, 0x12, None),
+    'LBC':   ('LBRY Credits',      0x55, 0xd5, 0x7a, None),
+    'DNR':   ('Denarius',          0x1e, 0x9e, 0x5a, None),
+    'BLOCK': ('Blocknet',          0x1a, 0x9a, 0x1c, None),
+    'ION':   ('ION',               0x66, 0xe6, 0x60, None),
+    'WGR':   ('Wagerr',            0x49, 0xc9, 0x3f, None),
+    'LCC':   ('Litecoin Cash',     0x1c, 0x9c, 0x05, None),
+    'SAFE':  ('Safecoin',          0x3d, 0xbd, 0x56, None),
+    'CANN':  ('CannabisCoin',      0x1c, 0x9c, 0x55, None),
+    'PINK':  ('Pinkcoin',          0x03, 0x83, 0x1c, None),
+    'XSH':   ('Shield',            0x3f, 0xbf, 0x12, None),
+    'SIB':   ('SIBCoin',           0x3f, 0xbf, 0x28, None),
+    'UNO':   ('Unobtanium',        0x82, 0xe0, 0x1e, None),
+    'GLT':   ('GlobalToken',       0x26, 0xa6, 0x05, 'glt'),
+    'CREA':  ('Creativecoin',      0x1c, 0x9c, 0x05, None),
+    # ── Testnet ──────────────────────────────────────────────────────────────
+    'TBTC':  ('Bitcoin Testnet',   0x6f, 0xef, 0xc4, 'tb'),
+    'TLTC':  ('Litecoin Testnet',  0x6f, 0xef, 0x3a, 'tltc'),
+}
 
 def determine_db_dir():
     import os
@@ -1141,13 +1215,13 @@ def PrivKeyToSecret(privkey):
         return privkey[8:8+32]
 
 def SecretToASecret(secret, compressed=False):
-    vchIn = chr((addrtype+128)&255) + secret
+    vchIn = chr(wif_prefix & 0xff) + secret
     if compressed: vchIn += '\01'
     return EncodeBase58Check(vchIn)
 
 def ASecretToSecret(sec):
     vch = DecodeBase58Check(sec)
-    if vch and vch[0] == chr((addrtype+128)&255):
+    if vch and vch[0] == chr(wif_prefix & 0xff):
         return vch[1:]
     else:
         return False
@@ -1331,18 +1405,18 @@ class BCDataStream(object):
         s = struct.pack(format, num)
         self.write(s)
 
-def open_wallet(db_env, writable=False):
+def open_wallet(db_env, writable=False, wallet_filename="wallet.dat"):
     db = DB(db_env)
     flags = DB_THREAD | (DB_CREATE if writable else DB_RDONLY)
     try:
-        r = db.open("wallet.dat", "main", DB_BTREE, flags)
+        r = db.open(wallet_filename, "main", DB_BTREE, flags)
     except DBError:
         r = True
 
     if r is not None:
-        logging.error("Couldn't open wallet.dat/main. Try quitting Bitcoin and running this again.")
+        logging.error("Couldn't open %s/main. Try quitting the coin daemon and running this again." % wallet_filename)
         sys.exit(1)
-    
+
     return db
 
 def parse_wallet(db, item_callback):
@@ -1503,8 +1577,8 @@ def update_wallet(db, type, data):
         print("data dictionary: %r"%data)
         traceback.print_exc()
 
-def rewrite_wallet(db_env, destFileName, pre_put_callback=None):
-    db = open_wallet(db_env)
+def rewrite_wallet(db_env, destFileName, pre_put_callback=None, wallet_filename="wallet.dat"):
+    db = open_wallet(db_env, wallet_filename=wallet_filename)
 
     db_out = DB(db_env)
     try:
@@ -1528,10 +1602,10 @@ def rewrite_wallet(db_env, destFileName, pre_put_callback=None):
 
 # wallet.dat reader / writer
 
-def read_wallet(json_db, db_env, print_wallet, print_wallet_transactions, transaction_filter):
+def read_wallet(json_db, db_env, print_wallet, print_wallet_transactions, transaction_filter, wallet_filename="wallet.dat"):
     global password
 
-    db = open_wallet(db_env)
+    db = open_wallet(db_env, wallet_filename=wallet_filename)
 
     json_db['keys'] = []
     json_db['pool'] = []
@@ -1699,7 +1773,7 @@ from optparse import OptionParser
 
 def main():
 
-    global addrtype
+    global addrtype, wif_prefix
 
     parser = OptionParser(usage="%prog [options]", version="%prog 1.2")
 
@@ -1709,8 +1783,12 @@ def main():
     parser.add_option("--importprivkey", dest="key",
         help="import private key from vanitygen")
 
-    parser.add_option("--datadir", dest="datadir", 
-        help="wallet directory (defaults to bitcoin default)")
+    parser.add_option("--datadir", dest="datadir",
+        help="wallet directory (defaults to Bitcoin default)")
+
+    parser.add_option("--walletfile", dest="walletfile",
+        help="path to a wallet.dat file (overrides --datadir; the file does not "
+             "have to be named wallet.dat)")
 
     parser.add_option("--testnet", dest="testnet", action="store_true",
         help="use testnet subdirectory and address type")
@@ -1718,24 +1796,82 @@ def main():
     parser.add_option("--password", dest="password",
         help="password for the encrypted wallet")
 
+    parser.add_option("--coin", dest="coin",
+        help="coin ticker to set network parameters automatically "
+             "(e.g. LTC, DOGE, DASH, RVN).  Use --listcoins to see all supported tickers.")
+
+    parser.add_option("--addrtype", dest="addrtype", type="int",
+        help="manually set pubkey address version byte (decimal, overrides --coin)")
+
+    parser.add_option("--wifprefix", dest="wifprefix", type="int",
+        help="manually set WIF private-key version byte (decimal, overrides --coin)")
+
+    parser.add_option("--listcoins", dest="listcoins", action="store_true",
+        help="list all supported coin tickers and exit")
+
     (options, args) = parser.parse_args()
+
+    if options.listcoins:
+        print "Supported coins (use the ticker with --coin):"
+        print "%-8s  %-24s  %6s  %6s  %6s  %s" % (
+            "Ticker", "Name", "pubkey", "WIF", "P2SH", "bech32")
+        print "-" * 65
+        for ticker in sorted(COIN_PARAMS.keys()):
+            name, pub, wif, p2sh, hrp = COIN_PARAMS[ticker]
+            p2sh_str = ("0x%02x" % p2sh) if p2sh is not None else "  n/a"
+            hrp_str  = hrp if hrp is not None else "n/a"
+            print "%-8s  %-24s  0x%02x    0x%02x  %s  %s" % (
+                ticker, name, pub, wif, p2sh_str, hrp_str)
+        sys.exit(0)
 
     if options.dump is None and options.key is None:
         print "A mandatory option is missing\n"
         parser.print_help()
         sys.exit(1)
 
-    if options.datadir is None:
-        db_dir = determine_db_dir()
+    # ── Resolve wallet directory and filename ─────────────────────────────────
+    wallet_filename = "wallet.dat"
+
+    if options.walletfile:
+        walletfile_path = os.path.abspath(options.walletfile)
+        db_dir = os.path.dirname(walletfile_path)
+        wallet_filename = os.path.basename(walletfile_path)
     else:
-        db_dir = options.datadir
+        if options.datadir is None:
+            db_dir = determine_db_dir()
+        else:
+            db_dir = options.datadir
 
-    if options.testnet:
-        db_dir += "/testnet"
-        addrtype = 111
+        if options.testnet:
+            db_dir += "/testnet"
 
-    if os.path.exists(db_dir+"/wallets"):
-        db_dir += "/wallets"
+        if os.path.exists(db_dir + "/wallets"):
+            db_dir += "/wallets"
+
+    # ── Set network parameters ────────────────────────────────────────────────
+    # Priority: --addrtype/--wifprefix > --coin > --testnet > default (BTC)
+
+    if options.testnet and not options.walletfile:
+        addrtype  = 0x6f  # 111
+        wif_prefix = 0xef  # 239
+
+    if options.coin:
+        ticker = options.coin.upper()
+        if ticker not in COIN_PARAMS:
+            print "Unknown coin '%s'. Run --listcoins to see supported tickers." % options.coin
+            print "You can still specify parameters manually with --addrtype and --wifprefix."
+            sys.exit(1)
+        name, pub, wif, p2sh, hrp = COIN_PARAMS[ticker]
+        addrtype   = pub
+        wif_prefix = wif
+        sys.stderr.write("Using %s network parameters (pubkey=0x%02x, WIF=0x%02x)\n" % (
+            name, pub, wif))
+
+    if options.addrtype is not None:
+        addrtype = options.addrtype
+
+    if options.wifprefix is not None:
+        wif_prefix = options.wifprefix
 
     db_env = create_env(db_dir)
 
@@ -1744,33 +1880,53 @@ def main():
     if options.password:
         password = options.password
 
-    read_wallet(json_db, db_env, True, True, "")
+    read_wallet(json_db, db_env, True, True, "", wallet_filename=wallet_filename)
 
-    p2sh = json_db.get('minversion') >= 100000
+    p2sh_version = None
+    bech32_hrp   = None
+    if options.coin:
+        ticker = options.coin.upper()
+        if ticker in COIN_PARAMS:
+            _, _, _, p2sh_version, bech32_hrp = COIN_PARAMS[ticker]
+
+    p2sh   = json_db.get('minversion') >= 100000
     bech32 = json_db.get('minversion') >= 159900
 
     if options.dump:
 
         if p2sh or bech32:
+            saved_addrtype = addrtype
             for i in xrange(len(json_db['keys'])):
                 if 'pubkey' in json_db['keys'][i].keys():
                     pub = json_db['keys'][i]['pubkey'].decode('hex')
 
                     if p2sh:
-                        addrtype = 0xc4 if options.testnet else 0x05
+                        if p2sh_version is not None:
+                            addrtype = p2sh_version
+                        elif options.testnet:
+                            addrtype = 0xc4
+                        else:
+                            addrtype = 0x05
                         json_db['keys'][i]['p2sh'] = public_key_to_bc_address('\x00\x14' + hash_160(pub))
 
                     if bech32:
-                        hrp = 'tb' if options.testnet else 'bc'
+                        if bech32_hrp is not None:
+                            hrp = bech32_hrp
+                        elif options.testnet:
+                            hrp = 'tb'
+                        else:
+                            hrp = 'bc'
                         json_db['keys'][i]['bech32'] = encode(hrp, 0, bytearray(hash_160(pub)))
+
+            addrtype = saved_addrtype
 
         print json.dumps(json_db, sort_keys=True, indent=4)
 
     elif options.key:
         if options.key in private_keys:
             print "Already exists"
-        else:    
-            db = open_wallet(db_env, writable=True)
+        else:
+            db = open_wallet(db_env, writable=True, wallet_filename=wallet_filename)
 
             if importprivkey(db, options.key):
                 print "Imported successfully"
@@ -1781,3 +1937,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+
