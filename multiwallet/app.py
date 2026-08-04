@@ -118,9 +118,9 @@ def load_wallet():
         session_id = manager.load_wallet(ticker, dat_path, passphrase, label)
     except (ValueError, RuntimeError) as exc:
         return _json_err(str(exc))
-    except Exception as exc:
+    except Exception:
         logger.exception("Unexpected error loading wallet")
-        return _json_err("Internal error: {}".format(exc), 500)
+        return _json_err("Internal server error", 500)
 
     return _json_ok(session_id=session_id, ticker=ticker)
 
