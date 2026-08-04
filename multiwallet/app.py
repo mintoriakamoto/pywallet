@@ -118,7 +118,7 @@ def load_wallet():
         session_id = manager.load_wallet(ticker, dat_path, passphrase, label)
     except ValueError as exc:
         logger.warning("load_wallet validation error: %s", exc)
-        return _json_err("Invalid request: {}".format(exc))
+        return _json_err("Invalid request. Check ticker and dat_path.")
     except RuntimeError as exc:
         logger.warning("load_wallet runtime error: %s", exc)
         return _json_err("Could not load wallet. Check the path, coin, and passphrase.")
