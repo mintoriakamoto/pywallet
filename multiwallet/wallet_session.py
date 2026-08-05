@@ -18,7 +18,7 @@ import struct
 import time
 from typing import Dict, List, Optional, Tuple
 
-from .coin_registry import CoinInfo
+from .coin_registry import CoinInfo, version_bytes
 
 logger = logging.getLogger(__name__)
 
@@ -65,8 +65,14 @@ def _b58encode(data: bytes) -> str:
 
 
 def _b58check_encode(version: int, payload: bytes) -> str:
-    """Encode version + payload with a 4-byte checksum into Base58Check."""
-    data = bytes([version]) + payload
+    """
+    Encode version + payload with a 4-byte checksum into Base58Check.
+
+    *version* may be wider than one byte — the Zcash-derived coins use two
+    (ZEC 0x1cb8, ZEN 0x2089) — so the prefix is encoded at its natural width
+    rather than assumed to be a single byte.
+    """
+    data = version_bytes(version) + payload
     chk = hashlib.sha256(hashlib.sha256(data).digest()).digest()[:4]
     return _b58encode(data + chk)
 
