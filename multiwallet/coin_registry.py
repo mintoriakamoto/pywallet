@@ -18,7 +18,7 @@ import json
 import logging
 import threading
 import time
-from typing import Dict, Optional, Any
+from typing import Dict, List, Optional, Any
 
 try:
     from urllib2 import urlopen, Request, URLError  # Python 2
@@ -77,6 +77,48 @@ STATIC_COIN_PARAMS: Dict[str, tuple] = {
     'ION':  ('ION',                0x49,  0xc9,  0x0d,  None,   None),
 }
 
+# ---------------------------------------------------------------------------
+# Parameter provenance
+#
+# Where a coin's version bytes came from.  This travels with every CoinInfo and
+# is surfaced in the API so callers can tell a verified parameter from a guess.
+# Ordered most trustworthy first.
+# ---------------------------------------------------------------------------
+PROVENANCE_NODE = "node"        # read back from a coin daemon over RPC — exact
+PROVENANCE_MANUAL = "manual"    # supplied by the operator
+PROVENANCE_TABLE = "table"      # STATIC_COIN_PARAMS above
+PROVENANCE_GUESSED = "guessed"  # inferred from a ranked convention
+PROVENANCE_DEFAULT = "default"  # Bitcoin defaults; almost certainly wrong
+
+#: Provenances whose addresses should not be trusted without checking.
+UNVERIFIED_PROVENANCES = (PROVENANCE_GUESSED, PROVENANCE_DEFAULT)
+
+BITCOIN_WIF_VER = 0x80
+
+
+def wif_candidates(pubkey_ver: int) -> List[int]:
+    """
+    Return the ranked WIF version-byte candidates for *pubkey_ver*.
+
+    Two conventions cover 55 of the 58 coins in pywallet.py's COIN_PARAMS:
+
+      1. ``(pubkey_ver + 0x80) & 0xff`` — the usual derivation (51/58)
+      2. ``0x80`` — fork changed the pubkey byte but kept Bitcoin's WIF byte;
+         catches RVN, GRS, QTUM and IXC (+4)
+
+    The rest (PIVX 0xd4, CLAM 0x85, UNO 0xe0) are arbitrary and cannot be
+    inferred; they need PROVENANCE_NODE or PROVENANCE_MANUAL.
+
+    The WIF version byte only affects how a secret is *encoded for export* —
+    a wrong guess yields a string the coin's wallet rejects on import, which is
+    visible and retryable.  It never alters the underlying key.
+    """
+    candidates: List[int] = []
+    for candidate in (((pubkey_ver + BITCOIN_WIF_VER) & 0xff), BITCOIN_WIF_VER):
+        if candidate not in candidates:
+            candidates.append(candidate)
+    return candidates
+
 
 class CoinInfo:
     """Holds network parameters and live stats for a single coin."""
@@ -91,6 +133,7 @@ class CoinInfo:
         bech32_hrp: Optional[str],
         bip44_index: Optional[int],
         algorithm: str = "unknown",
+        provenance: str = PROVENANCE_TABLE,
         **extra: Any,
     ):
         self.ticker = ticker
@@ -101,7 +144,29 @@ class CoinInfo:
         self.bech32_hrp = bech32_hrp
         self.bip44_index = bip44_index
         self.algorithm = algorithm
+        self.provenance = provenance
         self.extra = extra  # live stats from miningpoolstats
+
+    @property
+    def verified(self) -> bool:
+        """True when the version bytes come from a trustworthy source."""
+        return self.provenance not in UNVERIFIED_PROVENANCES
+
+    @property
+    def wif_candidates(self) -> List[int]:
+        """
+        Ranked WIF version bytes to try when exporting a secret.
+
+        For a verified coin this is just the known byte.  For a guessed one it
+        is the ranked convention list, so a rejected import can be retried with
+        the next candidate instead of dead-ending.
+        """
+        if self.verified:
+            return [self.wif_ver]
+        ranked = wif_candidates(self.pubkey_ver)
+        if self.wif_ver in ranked:
+            ranked.remove(self.wif_ver)
+        return [self.wif_ver] + ranked
 
     def to_dict(self) -> dict:
         d = {
@@ -113,6 +178,9 @@ class CoinInfo:
             "bech32_hrp": self.bech32_hrp,
             "bip44_index": self.bip44_index,
             "algorithm": self.algorithm,
+            "provenance": self.provenance,
+            "verified": self.verified,
+            "wif_candidates": self.wif_candidates,
         }
         d.update(self.extra)
         return d
@@ -172,6 +240,92 @@ class CoinRegistry:
         """Force a refresh from miningpoolstats.stream."""
         self._fetch_mps_data()
 
+    def register(
+        self,
+        ticker: str,
+        pubkey_ver: int,
+        wif_ver: Optional[int] = None,
+        p2sh_ver: Optional[int] = None,
+        bech32_hrp: Optional[str] = None,
+        name: Optional[str] = None,
+        bip44_index: Optional[int] = None,
+        provenance: str = PROVENANCE_MANUAL,
+    ) -> CoinInfo:
+        """
+        Register (or overwrite) a coin with explicitly supplied parameters.
+
+        This is how a coin that is in no table becomes loadable.  Only
+        *pubkey_ver* is required; when *wif_ver* is omitted the top-ranked
+        candidate is used and the coin is downgraded to PROVENANCE_GUESSED so
+        callers can see the byte was inferred rather than supplied.
+
+        Raises ValueError if a version byte is outside 0x00-0xff.
+        """
+        ticker = ticker.upper()
+        for label, value in (
+            ("pubkey_ver", pubkey_ver),
+            ("wif_ver", wif_ver),
+            ("p2sh_ver", p2sh_ver),
+        ):
+            if value is not None and not 0 <= value <= 0xFF:
+                raise ValueError("{} must be 0x00-0xff, got {}".format(label, value))
+
+        if wif_ver is None:
+            wif_ver = wif_candidates(pubkey_ver)[0]
+            provenance = PROVENANCE_GUESSED
+
+        info = CoinInfo(
+            ticker=ticker,
+            name=name or ticker,
+            pubkey_ver=pubkey_ver,
+            wif_ver=wif_ver,
+            p2sh_ver=p2sh_ver,
+            bech32_hrp=bech32_hrp,
+            bip44_index=bip44_index,
+            provenance=provenance,
+        )
+        with self._lock:
+            self._coins[ticker] = info
+        logger.info(
+            "CoinRegistry: registered %s (pubkey=0x%02x wif=0x%02x provenance=%s)",
+            ticker, pubkey_ver, wif_ver, provenance,
+        )
+        return info
+
+    def resolve(
+        self,
+        ticker: str,
+        params: Optional[dict] = None,
+    ) -> Optional[CoinInfo]:
+        """
+        Look up *ticker*, optionally overriding or supplying its parameters.
+
+        Resolution order:
+          1. *params* with a pubkey_ver -> register explicitly (exact or guessed)
+          2. a known coin with verified parameters -> return it
+          3. a known coin whose parameters are unverified (MPS-only, i.e.
+             Bitcoin defaults) -> return it, still flagged unverified
+          4. unknown ticker and no params -> None
+
+        Case 4 is the only failure, and it is recoverable by passing params.
+        """
+        ticker = ticker.upper()
+        params = params or {}
+        pubkey_ver = params.get("pubkey_ver")
+
+        if pubkey_ver is not None:
+            return self.register(
+                ticker,
+                pubkey_ver=pubkey_ver,
+                wif_ver=params.get("wif_ver"),
+                p2sh_ver=params.get("p2sh_ver"),
+                bech32_hrp=params.get("bech32_hrp"),
+                name=params.get("name"),
+                provenance=params.get("provenance", PROVENANCE_MANUAL),
+            )
+
+        return self.get(ticker)
+
     # ------------------------------------------------------------------
     # Internal helpers
     # ------------------------------------------------------------------
@@ -186,6 +340,7 @@ class CoinRegistry:
                 p2sh_ver=p2sh,
                 bech32_hrp=bech32,
                 bip44_index=bip44,
+                provenance=PROVENANCE_TABLE,
             )
 
     def _maybe_refresh(self) -> None:
@@ -245,16 +400,20 @@ class CoinRegistry:
                 self._coins[ticker].algorithm = algo
                 self._coins[ticker].extra.update(extra)
             else:
-                # Coin is on MPS but not in static table — add with defaults
+                # Coin is on MPS but not in the static table.  Bitcoin defaults
+                # are a placeholder so the coin is at least visible — they are
+                # almost certainly wrong, hence PROVENANCE_DEFAULT.  Callers
+                # must supply real parameters before addresses mean anything.
                 name = info.get("name") or info.get("coin") or ticker
                 self._coins[ticker] = CoinInfo(
                     ticker=ticker,
                     name=name,
-                    pubkey_ver=0x00,  # unknown; will use BTC defaults
-                    wif_ver=0x80,
+                    pubkey_ver=0x00,
+                    wif_ver=BITCOIN_WIF_VER,
                     p2sh_ver=0x05,
                     bech32_hrp=None,
                     bip44_index=None,
                     algorithm=algo,
+                    provenance=PROVENANCE_DEFAULT,
                     **extra,
                 )

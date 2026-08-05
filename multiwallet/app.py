@@ -60,6 +60,50 @@ def _json_err(msg: str, code: int = 400):
     return jsonify({"ok": False, "error": msg}), code
 
 
+def _parse_version_byte(value) -> int:
+    """
+    Coerce a JSON-supplied version byte to an int.
+
+    Accepts an int or a string in decimal or ``0x``-prefixed hex, since the UI
+    and curl users naturally write ``"0x3c"``.  Raises ValueError on anything
+    else; callers map that to a 400.
+    """
+    if isinstance(value, bool):  # bool is an int subclass — reject explicitly
+        raise ValueError("version byte must be a number, not a boolean")
+    if isinstance(value, int):
+        return value
+    if isinstance(value, str):
+        return int(value.strip(), 0)
+    raise ValueError("version byte must be an int or a numeric string")
+
+
+def _parse_coin_params(data: dict) -> dict:
+    """
+    Extract optional network parameters from a load request body.
+
+    Returns {} when none were supplied, so a known ticker keeps its table
+    entry.  Raises ValueError if the caller sent something unusable.
+    """
+    keys = ("pubkey_ver", "wif_ver", "p2sh_ver", "bech32_hrp", "name")
+    if not any(data.get(k) is not None for k in keys):
+        return {}
+
+    params: dict = {}
+    for key in ("pubkey_ver", "wif_ver", "p2sh_ver"):
+        if data.get(key) is not None:
+            params[key] = _parse_version_byte(data[key])
+    for key in ("bech32_hrp", "name"):
+        value = data.get(key)
+        if value is not None:
+            if not isinstance(value, str):
+                raise ValueError("{} must be a string".format(key))
+            params[key] = value.strip() or None
+
+    if "pubkey_ver" not in params:
+        raise ValueError("pubkey_ver is required when supplying coin params")
+    return params
+
+
 # ---------------------------------------------------------------------------
 # UI
 # ---------------------------------------------------------------------------
@@ -115,10 +159,13 @@ def load_wallet():
 
     manager = WalletManager.get_instance()
     try:
-        session_id = manager.load_wallet(ticker, dat_path, passphrase, label)
+        params = _parse_coin_params(data)
+        session_id = manager.load_wallet(ticker, dat_path, passphrase, label, params)
     except ValueError as exc:
         logger.warning("load_wallet validation error: %s", exc)
-        return _json_err("Invalid request. Check ticker and dat_path.")
+        return _json_err(
+            "Invalid request. Check ticker, dat_path, and any coin params."
+        )
     except RuntimeError as exc:
         logger.warning("load_wallet runtime error: %s", exc)
         return _json_err("Could not load wallet. Check the path, coin, and passphrase.")
@@ -126,7 +173,14 @@ def load_wallet():
         logger.exception("Unexpected error loading wallet")
         return _json_err("Internal server error", 500)
 
-    return _json_ok(session_id=session_id, ticker=ticker)
+    # Surface parameter provenance so the caller can tell a verified coin from
+    # a guessed one before trusting any address or exported WIF.
+    coin = CoinRegistry.get_instance().get(ticker)
+    return _json_ok(
+        session_id=session_id,
+        ticker=ticker,
+        coin=coin.to_dict() if coin else None,
+    )
 
 
 # ---------------------------------------------------------------------------

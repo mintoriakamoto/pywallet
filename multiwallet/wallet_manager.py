@@ -62,18 +62,36 @@ class WalletManager:
         dat_path: str,
         passphrase: Optional[str] = None,
         label: Optional[str] = None,
+        params: Optional[dict] = None,
     ) -> str:
         """
         Load a wallet.dat for *ticker*.  Multiple wallet.dat files can be
         loaded for the same coin.
 
+        *params* optionally supplies network parameters for a coin that is in
+        no table — ``{"pubkey_ver": int, "wif_ver": int, "p2sh_ver": int,
+        "bech32_hrp": str, "name": str}``.  Only ``pubkey_ver`` is required;
+        an omitted ``wif_ver`` is inferred from the ranked convention and the
+        coin is flagged as unverified.  Supplying *params* for a known coin
+        overrides its table entry.
+
         Returns the session_id string on success.
-        Raises ValueError if the coin is unknown or the file doesn't exist.
+        Raises ValueError if the coin is unknown and no usable *params* were
+        given, if those params are malformed, or if the file doesn't exist.
         """
         ticker = ticker.upper()
-        coin_info = self._registry.get(ticker)
+        coin_info = self._registry.resolve(ticker, params)
         if coin_info is None:
-            raise ValueError("Unknown coin ticker: {}".format(ticker))
+            raise ValueError(
+                "Unknown coin ticker {}; supply params with a pubkey_ver "
+                "to load it anyway".format(ticker)
+            )
+        if not coin_info.verified:
+            logger.warning(
+                "WalletManager: %s parameters are unverified (%s) — derived "
+                "addresses and exported WIFs may be wrong",
+                ticker, coin_info.provenance,
+            )
 
         import os
         if not os.path.isfile(dat_path):

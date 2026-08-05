@@ -1,0 +1,10 @@
+__pycache__/
+*.py[cod]
+.pytest_cache/
+*.egg-info/
+.venv/
+venv/
+
+# Never commit wallet data.
+*.dat
+!tests/fixtures/*.dat
