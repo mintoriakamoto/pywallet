@@ -109,14 +109,32 @@ the node's chain id, and the app shows which coins were **derived from a node**
 versus **taken from the static table** versus **entered by hand** — because
 those carry very different confidence.
 
-Two fallbacks for when a node isn't available for a coin:
+Three fallbacks for when a node isn't available for a coin:
 
-* **Learn from a known address.** Paste any address of that coin and we recover
-  the pubkey version byte. This does *not* yield the WIF byte — the widespread
-  "WIF = pubkey + 0x80" convention is violated by real coins in our own table
-  (RVN is `0x3c`/`0x80`, GRS is `0x24`/`0x80`), so we will not guess it. The
-  wallet loads read-only for address display.
-* **Manual entry**, with all four bytes required and no defaults filled in.
+* **Learn from a known WIF.** Paste any private key of that coin and the WIF
+  byte is recovered exactly. Same for an address and the pubkey byte. This is
+  the only exact method without a node.
+* **Ranked candidate guessing.** Measured against our own 58-coin table, two
+  conventions cover 55 of 58 (95%):
+
+  | # | Candidate | Rationale | Coverage |
+  |---|---|---|---|
+  | 1 | `(pubkey + 0x80) & 0xff` | the common derivation | 51/58 (88%) |
+  | 2 | `0x80` | fork kept Bitcoin's WIF byte while changing the pubkey byte | +4 (RVN, GRS, QTUM, IXC) |
+
+  The remaining three are genuinely arbitrary and unguessable — PIVX `0xd4`,
+  CLAM `0x85`, UNO `0xe0` — which is why candidates are *ranked and labelled*,
+  not silently applied. The wallet loads and functions; exported WIFs carry a
+  `guessed` provenance marker and show both candidates so a rejected import can
+  be retried with the second in one click. Getting this wrong costs an import
+  attempt, not funds — the byte is display encoding only, and the underlying
+  key is unaffected.
+* **Manual entry** of all four bytes, which overrides everything above.
+
+Whenever the wallet is unencrypted, every candidate is sanity-checked by
+round-tripping: encode the secret to WIF, decode it back, derive the pubkey, and
+confirm it matches the pubkey stored in the wallet record. That verifies the key
+material is intact even when the version byte is a guess.
 
 An important compatibility note: `scantxoutset` (the fast, no-rescan balance
 path) landed in Core 0.17. Forks from older code won't have it. Fallback is
@@ -296,7 +314,8 @@ configured for this coin" as a normal state rather than an error.
 |---|---|
 | A signing bug burns real funds | regtest-gated CI, PSBT round-trip tests, `testmempoolaccept`, mainnet last |
 | Writing to `wallet.dat` corrupts it | never write in place; backup + verify + swap; read-only default |
-| Wrong version bytes produce valid-looking wrong addresses | derive from node where possible; show provenance; refuse to guess WIF bytes; golden vectors in CI |
+| Wrong version bytes produce valid-looking wrong addresses | derive from node where possible; show provenance on every export; golden vectors in CI |
+| A guessed WIF byte is mistaken for canonical | rank and label candidates, never silently apply; round-trip validation proves the key itself is intact |
 | Old fork lacks `scantxoutset` | probe and fall back to `importaddress` + rescan |
 | Old fork can't parse PSBT | we own the PSBT layer; node only sees `sendrawtransaction` |
 | Salvage mode yields plausible garbage keys | validate every candidate by pubkey derivation before surfacing it |
