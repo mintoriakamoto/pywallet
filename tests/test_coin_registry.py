@@ -25,8 +25,10 @@ from multiwallet.coin_registry import (  # noqa: E402
     PROVENANCE_MANUAL,
     PROVENANCE_NODE,
     PROVENANCE_TABLE,
+    STATIC_COIN_PARAMS,
     CoinInfo,
     CoinRegistry,
+    version_bytes,
     wif_candidates,
 )
 
@@ -170,7 +172,7 @@ def test_register_overrides_a_table_coin(registry):
     assert registry.get("DOGE").pubkey_ver == 0x1F
 
 
-@pytest.mark.parametrize("bad", [-1, 256, 0x1FF])
+@pytest.mark.parametrize("bad", [-1, 0x10000, 0xFFFFF])
 def test_register_rejects_out_of_range_bytes(registry, bad):
     with pytest.raises(ValueError):
         registry.register("BAD", pubkey_ver=bad)
@@ -178,7 +180,101 @@ def test_register_rejects_out_of_range_bytes(registry, bad):
 
 def test_register_rejects_out_of_range_wif(registry):
     with pytest.raises(ValueError):
-        registry.register("BAD", pubkey_ver=0x10, wif_ver=999)
+        registry.register("BAD", pubkey_ver=0x10, wif_ver=0x10000)
+
+
+def test_register_accepts_two_byte_prefix(registry):
+    """ZEC-style prefixes must survive registration."""
+    coin = registry.register("ZEC2", pubkey_ver=0x1CB8, wif_ver=0x80, p2sh_ver=0x1CBD)
+    assert coin.pubkey_version_bytes == b"\x1c\xb8"
+
+
+# ---------------------------------------------------------------------------
+# version_bytes
+# ---------------------------------------------------------------------------
+
+@pytest.mark.parametrize("version,expected", [
+    (0x00, b"\x00"),      # BTC — still one byte
+    (0x30, b"\x30"),      # LTC
+    (0xFF, b"\xff"),      # widest single byte
+    (0x1CB8, b"\x1c\xb8"),  # ZEC
+    (0x2089, b"\x20\x89"),  # ZEN
+])
+def test_version_bytes_uses_natural_width(version, expected):
+    assert version_bytes(version) == expected
+
+
+def test_version_bytes_rejects_negative():
+    with pytest.raises(ValueError):
+        version_bytes(-1)
+
+
+# ---------------------------------------------------------------------------
+# the generated table
+# ---------------------------------------------------------------------------
+
+def test_generated_table_is_loaded(registry):
+    """coins.json should be found and preferred over the embedded table."""
+    assert len(registry.all()) > len(STATIC_COIN_PARAMS)
+
+
+@pytest.mark.parametrize("ticker,pubkey_ver,wif_ver", [
+    ("BTC", 0x00, 0x80),
+    ("LTC", 0x30, 0xb0),
+    ("DOGE", 0x1e, 0x9e),   # hdwallet had testnet 0xf1; we keep 0x9e
+    ("NMC", 0x34, 0xb4),    # hdwallet had 0x80; coininfo agrees with us
+])
+def test_known_good_values_survive_the_merge(registry, ticker, pubkey_ver, wif_ver):
+    coin = registry.get(ticker)
+    assert (coin.pubkey_ver, coin.wif_ver) == (pubkey_ver, wif_ver)
+
+
+@pytest.mark.parametrize("ticker,wif_ver", [
+    ("BTG", 0x80),   # was 0xa6
+    ("DGB", 0x80),   # was 0x9e
+    ("MONA", 0xb0),  # was 0xb2
+    ("VTC", 0x80),   # was 0xc7
+])
+def test_majority_corrections_applied(registry, ticker, wif_ver):
+    """Four WIF bytes that two independent sources agreed we had wrong."""
+    assert registry.get(ticker).wif_ver == wif_ver
+
+
+@pytest.mark.parametrize("ticker", ["BTX", "LBC", "LCC", "NLG", "PHR", "SYS"])
+def test_disputed_coins_are_flagged_not_silently_picked(registry, ticker):
+    coin = registry.get(ticker)
+    assert coin.disputed is True
+    assert coin.verified is False
+    # Both candidates are offered so a rejected import can be retried.
+    assert len(coin.wif_candidates) >= 2
+    assert coin.to_dict()["disputed"] is True
+
+
+@pytest.mark.parametrize("ticker,pubkey_ver", [
+    ("ZEC", 0x1cb8),
+    ("ZEN", 0x2089),
+    ("FLUX", 0x1cb8),
+    ("BTCZ", 0x1cb8),
+])
+def test_two_byte_prefix_coins_are_present(registry, ticker, pubkey_ver):
+    """Previously unrepresentable — the single-byte schema could not hold them."""
+    coin = registry.get(ticker)
+    assert coin.pubkey_ver == pubkey_ver
+    assert len(coin.pubkey_version_bytes) == 2
+    assert coin.to_dict()["multibyte_prefix"] is True
+
+
+def test_single_byte_coins_not_marked_multibyte(registry):
+    assert registry.get("BTC").to_dict()["multibyte_prefix"] is False
+
+
+def test_every_coin_has_usable_parameters(registry):
+    for ticker, coin in registry.all().items():
+        assert isinstance(coin.pubkey_ver, int), ticker
+        assert 0 <= coin.pubkey_ver <= 0xFFFF, ticker
+        assert isinstance(coin.wif_ver, int), ticker
+        assert 0 <= coin.wif_ver <= 0xFFFF, ticker
+        assert coin.name, ticker
 
 
 # ---------------------------------------------------------------------------

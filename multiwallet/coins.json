@@ -1,0 +1,1906 @@
+{
+ "AC": {
+  "bip44": 51,
+  "hrp": null,
+  "name": "Asiacoin",
+  "p2sh": 8,
+  "pub": 23,
+  "sources": [
+   "hdwallet"
+  ],
+  "wif": 151
+ },
+ "AGM": {
+  "bip44": 421,
+  "hrp": null,
+  "name": "Argoneum",
+  "p2sh": 97,
+  "pub": 50,
+  "sources": [
+   "hdwallet"
+  ],
+  "wif": 191
+ },
+ "ANON": {
+  "bip44": 220,
+  "hrp": null,
+  "name": "Anon",
+  "p2sh": 21385,
+  "pub": 1410,
+  "sources": [
+   "hdwallet"
+  ],
+  "wif": 128
+ },
+ "ATOM": {
+  "bip44": 118,
+  "hrp": "atom",
+  "name": "Atom",
+  "p2sh": 10,
+  "pub": 23,
+  "sources": [
+   "hdwallet"
+  ],
+  "wif": 128
+ },
+ "AUR": {
+  "bip44": 85,
+  "hrp": null,
+  "name": "Auroracoin",
+  "p2sh": 5,
+  "pub": 23,
+  "sources": [
+   "pywallet",
+   "hdwallet"
+  ],
+  "wif": 151
+ },
+ "AXE": {
+  "bip44": 4242,
+  "hrp": null,
+  "name": "Axe",
+  "p2sh": 16,
+  "pub": 55,
+  "sources": [
+   "hdwallet"
+  ],
+  "wif": 204
+ },
+ "AYA": {
+  "bip44": 357,
+  "hrp": null,
+  "name": "Aryacoin",
+  "p2sh": 111,
+  "pub": 23,
+  "sources": [
+   "hdwallet"
+  ],
+  "wif": 151
+ },
+ "BCH": {
+  "bip44": 145,
+  "hrp": "bc",
+  "name": "Bitcoin Cash",
+  "p2sh": 40,
+  "pub": 28,
+  "sources": [
+   "hdwallet",
+   "coininfo"
+  ],
+  "wif": 128
+ },
+ "BEET": {
+  "bip44": 800,
+  "hrp": null,
+  "name": "Beetle Coin",
+  "p2sh": 85,
+  "pub": 26,
+  "sources": [
+   "hdwallet"
+  ],
+  "wif": 153
+ },
+ "BELA": {
+  "bip44": 73,
+  "hrp": null,
+  "name": "Bela Coin",
+  "p2sh": 5,
+  "pub": 25,
+  "sources": [
+   "hdwallet"
+  ],
+  "wif": 153
+ },
+ "BLK": {
+  "bip44": 10,
+  "hrp": null,
+  "name": "Blackcoin",
+  "p2sh": 85,
+  "pub": 25,
+  "sources": [
+   "pywallet",
+   "hdwallet",
+   "coininfo"
+  ],
+  "wif": 153
+ },
+ "BLOCK": {
+  "bip44": null,
+  "hrp": null,
+  "name": "Blocknet",
+  "p2sh": 28,
+  "pub": 26,
+  "sources": [
+   "pywallet"
+  ],
+  "wif": 154
+ },
+ "BND": {
+  "bip44": 2941,
+  "hrp": null,
+  "name": "Blocknode",
+  "p2sh": 63,
+  "pub": 25,
+  "sources": [
+   "hdwallet"
+  ],
+  "wif": 75
+ },
+ "BOLI": {
+  "bip44": 278,
+  "hrp": null,
+  "name": "Bolivarcoin",
+  "p2sh": 5,
+  "pub": 85,
+  "sources": [
+   "hdwallet"
+  ],
+  "wif": 213
+ },
+ "BRIT": {
+  "bip44": 70,
+  "hrp": null,
+  "name": "Brit Coin",
+  "p2sh": 85,
+  "pub": 25,
+  "sources": [
+   "hdwallet"
+  ],
+  "wif": 153
+ },
+ "BSD": {
+  "bip44": 91,
+  "hrp": null,
+  "name": "Bit Send",
+  "p2sh": 5,
+  "pub": 102,
+  "sources": [
+   "hdwallet"
+  ],
+  "wif": 204
+ },
+ "BST": {
+  "bip44": 254,
+  "hrp": "bc",
+  "name": "Block Stamp",
+  "p2sh": 5,
+  "pub": 0,
+  "sources": [
+   "hdwallet"
+  ],
+  "wif": 128
+ },
+ "BSV": {
+  "bip44": 236,
+  "hrp": null,
+  "name": "Bitcoin SV",
+  "p2sh": 5,
+  "pub": 0,
+  "sources": [
+   "hdwallet"
+  ],
+  "wif": 128
+ },
+ "BTA": {
+  "bip44": 89,
+  "hrp": null,
+  "name": "Bata",
+  "p2sh": 5,
+  "pub": 25,
+  "sources": [
+   "hdwallet"
+  ],
+  "wif": 164
+ },
+ "BTC": {
+  "bip44": 0,
+  "hrp": "bc",
+  "name": "Bitcoin",
+  "p2sh": 5,
+  "pub": 0,
+  "sources": [
+   "pywallet",
+   "hdwallet",
+   "coininfo"
+  ],
+  "wif": 128
+ },
+ "BTCZ": {
+  "bip44": 177,
+  "hrp": null,
+  "name": "BitcoinZ",
+  "p2sh": 7357,
+  "pub": 7352,
+  "sources": [
+   "hdwallet"
+  ],
+  "wif": 128
+ },
+ "BTDX": {
+  "bip44": 218,
+  "hrp": null,
+  "name": "Bit Cloud",
+  "p2sh": 5,
+  "pub": 25,
+  "sources": [
+   "hdwallet"
+  ],
+  "wif": 153
+ },
+ "BTG": {
+  "bip44": 156,
+  "corrected": "Bitcoin Gold kept Bitcoin's SECRET_KEY=128; we had 0xa6",
+  "hrp": "btg",
+  "name": "Bitcoin Gold",
+  "p2sh": 23,
+  "pub": 38,
+  "sources": [
+   "pywallet",
+   "hdwallet",
+   "coininfo"
+  ],
+  "wif": 128
+ },
+ "BTX": {
+  "bip44": 160,
+  "disputed": true,
+  "hrp": "btx",
+  "name": "Bitcore",
+  "p2sh": 8,
+  "pub": 3,
+  "sources": [
+   "pywallet",
+   "hdwallet"
+  ],
+  "wif": 131,
+  "wif_alternatives": [
+   128
+  ]
+ },
+ "CANN": {
+  "bip44": null,
+  "hrp": null,
+  "name": "CannabisCoin",
+  "p2sh": 85,
+  "pub": 28,
+  "sources": [
+   "pywallet"
+  ],
+  "wif": 156
+ },
+ "CCN": {
+  "bip44": 19,
+  "hrp": null,
+  "name": "Cannacoin",
+  "p2sh": 5,
+  "pub": 28,
+  "sources": [
+   "hdwallet"
+  ],
+  "wif": 156
+ },
+ "CDN": {
+  "bip44": 34,
+  "hrp": null,
+  "name": "Canada eCoin",
+  "p2sh": 5,
+  "pub": 28,
+  "sources": [
+   "hdwallet"
+  ],
+  "wif": 156
+ },
+ "CITY": {
+  "bip44": null,
+  "hrp": null,
+  "name": "CityCoin",
+  "p2sh": 88,
+  "pub": 28,
+  "sources": [
+   "coininfo"
+  ],
+  "wif": 237
+ },
+ "CLAM": {
+  "bip44": 23,
+  "hrp": null,
+  "name": "Clams",
+  "p2sh": 205,
+  "pub": 137,
+  "sources": [
+   "pywallet",
+   "hdwallet"
+  ],
+  "wif": 133
+ },
+ "CLUB": {
+  "bip44": 79,
+  "hrp": null,
+  "name": "Club Coin",
+  "p2sh": 85,
+  "pub": 28,
+  "sources": [
+   "hdwallet"
+  ],
+  "wif": 153
+ },
+ "CMP": {
+  "bip44": 71,
+  "hrp": null,
+  "name": "Compcoin",
+  "p2sh": 85,
+  "pub": 28,
+  "sources": [
+   "hdwallet"
+  ],
+  "wif": 156
+ },
+ "CPU": {
+  "bip44": 363,
+  "hrp": "cpu",
+  "name": "CPU Chain",
+  "p2sh": 30,
+  "pub": 28,
+  "sources": [
+   "hdwallet"
+  ],
+  "wif": 128
+ },
+ "CRAVE": {
+  "bip44": 186,
+  "hrp": null,
+  "name": "Crave",
+  "p2sh": 85,
+  "pub": 70,
+  "sources": [
+   "hdwallet"
+  ],
+  "wif": 153
+ },
+ "CREA": {
+  "bip44": null,
+  "hrp": null,
+  "name": "Creativecoin",
+  "p2sh": 5,
+  "pub": 28,
+  "sources": [
+   "pywallet"
+  ],
+  "wif": 156
+ },
+ "CRP": {
+  "bip44": 2304,
+  "hrp": "cp",
+  "name": "Crane Pay",
+  "p2sh": 10,
+  "pub": 28,
+  "sources": [
+   "hdwallet"
+  ],
+  "wif": 123
+ },
+ "DASH": {
+  "bip44": 5,
+  "hrp": null,
+  "name": "Dash",
+  "p2sh": 16,
+  "pub": 76,
+  "sources": [
+   "pywallet",
+   "hdwallet",
+   "coininfo"
+  ],
+  "wif": 204
+ },
+ "DCR": {
+  "bip44": null,
+  "hrp": null,
+  "name": "Decred",
+  "p2sh": 1818,
+  "pub": 1855,
+  "sources": [
+   "coininfo"
+  ],
+  "wif": 8926
+ },
+ "DFC": {
+  "bip44": 1337,
+  "hrp": null,
+  "name": "Defcoin",
+  "p2sh": 5,
+  "pub": 30,
+  "sources": [
+   "hdwallet"
+  ],
+  "wif": 158
+ },
+ "DGB": {
+  "bip44": 20,
+  "corrected": "DigiByte SECRET_KEY=128; we had 0x9e",
+  "hrp": "dgb",
+  "name": "DigiByte",
+  "p2sh": 63,
+  "pub": 30,
+  "sources": [
+   "pywallet",
+   "hdwallet",
+   "coininfo"
+  ],
+  "wif": 128
+ },
+ "DGC": {
+  "bip44": 18,
+  "hrp": null,
+  "name": "Digitalcoin",
+  "p2sh": 5,
+  "pub": 30,
+  "sources": [
+   "hdwallet"
+  ],
+  "wif": 158
+ },
+ "DMD": {
+  "bip44": 152,
+  "hrp": null,
+  "name": "Diamond",
+  "p2sh": 8,
+  "pub": 90,
+  "sources": [
+   "pywallet",
+   "hdwallet"
+  ],
+  "wif": 218
+ },
+ "DNR": {
+  "bip44": 116,
+  "hrp": null,
+  "name": "Denarius",
+  "p2sh": 90,
+  "pub": 30,
+  "sources": [
+   "pywallet",
+   "hdwallet",
+   "coininfo"
+  ],
+  "wif": 158
+ },
+ "DOGE": {
+  "bip44": 3,
+  "hrp": null,
+  "name": "Dogecoin",
+  "p2sh": 22,
+  "pub": 30,
+  "sources": [
+   "pywallet",
+   "hdwallet",
+   "coininfo"
+  ],
+  "verified_against": "hdwallet reports 0xf1, which is Dogecoin *testnet*; coininfo and we both say 0x9e",
+  "wif": 158
+ },
+ "ECN": {
+  "bip44": 115,
+  "hrp": null,
+  "name": "Ecoin",
+  "p2sh": 20,
+  "pub": 92,
+  "sources": [
+   "hdwallet"
+  ],
+  "wif": 220
+ },
+ "EDRC": {
+  "bip44": 56,
+  "hrp": null,
+  "name": "EDR Coin",
+  "p2sh": 28,
+  "pub": 93,
+  "sources": [
+   "hdwallet"
+  ],
+  "wif": 221
+ },
+ "ELA": {
+  "bip44": 2305,
+  "hrp": null,
+  "name": "Elastos",
+  "p2sh": 196,
+  "pub": 33,
+  "sources": [
+   "hdwallet"
+  ],
+  "wif": 239
+ },
+ "EMC2": {
+  "bip44": 41,
+  "hrp": null,
+  "name": "Einsteinium",
+  "p2sh": 5,
+  "pub": 33,
+  "sources": [
+   "pywallet",
+   "hdwallet"
+  ],
+  "wif": 161
+ },
+ "ERC": {
+  "bip44": 151,
+  "hrp": null,
+  "name": "Europe Coin",
+  "p2sh": 5,
+  "pub": 33,
+  "sources": [
+   "hdwallet"
+  ],
+  "wif": 168
+ },
+ "ETH": {
+  "bip44": 60,
+  "hrp": "bc",
+  "name": "Ethereum",
+  "p2sh": 5,
+  "pub": 0,
+  "sources": [
+   "hdwallet"
+  ],
+  "wif": 128
+ },
+ "EXCL": {
+  "bip44": 190,
+  "hrp": null,
+  "name": "Exclusive Coin",
+  "p2sh": 137,
+  "pub": 33,
+  "sources": [
+   "hdwallet"
+  ],
+  "wif": 161
+ },
+ "FIRO": {
+  "bip44": null,
+  "hrp": null,
+  "name": "Firo",
+  "p2sh": 7,
+  "pub": 82,
+  "sources": [
+   "pywallet"
+  ],
+  "wif": 210
+ },
+ "FIX": {
+  "bip44": 336,
+  "hrp": null,
+  "name": "FIX",
+  "p2sh": 95,
+  "pub": 35,
+  "sources": [
+   "hdwallet"
+  ],
+  "wif": 60
+ },
+ "FJC": {
+  "bip44": 75,
+  "hrp": "fc",
+  "name": "Fuji Coin",
+  "p2sh": 16,
+  "pub": 36,
+  "sources": [
+   "hdwallet"
+  ],
+  "wif": 164
+ },
+ "FLASH": {
+  "bip44": 120,
+  "hrp": null,
+  "name": "Flashcoin",
+  "p2sh": 130,
+  "pub": 68,
+  "sources": [
+   "hdwallet"
+  ],
+  "wif": 196
+ },
+ "FLO": {
+  "bip44": null,
+  "hrp": null,
+  "name": "Florincoin",
+  "p2sh": 8,
+  "pub": 35,
+  "sources": [
+   "pywallet"
+  ],
+  "wif": 163
+ },
+ "FLUX": {
+  "bip44": 19167,
+  "hrp": null,
+  "name": "Flux",
+  "p2sh": 7357,
+  "pub": 7352,
+  "sources": [
+   "hdwallet"
+  ],
+  "wif": 128
+ },
+ "FRST": {
+  "bip44": 167,
+  "hrp": null,
+  "name": "Firstcoin",
+  "p2sh": 5,
+  "pub": 35,
+  "sources": [
+   "hdwallet"
+  ],
+  "wif": 163
+ },
+ "FTC": {
+  "bip44": 8,
+  "hrp": "fc",
+  "name": "Feathercoin",
+  "p2sh": 5,
+  "pub": 14,
+  "sources": [
+   "pywallet",
+   "hdwallet"
+  ],
+  "wif": 142
+ },
+ "GAME": {
+  "bip44": 101,
+  "hrp": null,
+  "name": "Game Credits",
+  "p2sh": 5,
+  "pub": 38,
+  "sources": [
+   "hdwallet"
+  ],
+  "wif": 166
+ },
+ "GBX": {
+  "bip44": 176,
+  "hrp": null,
+  "name": "Go Byte",
+  "p2sh": 10,
+  "pub": 38,
+  "sources": [
+   "hdwallet"
+  ],
+  "wif": 198
+ },
+ "GCR": {
+  "bip44": 49,
+  "hrp": null,
+  "name": "GCR Coin",
+  "p2sh": 97,
+  "pub": 38,
+  "sources": [
+   "hdwallet"
+  ],
+  "wif": 154
+ },
+ "GLT": {
+  "bip44": null,
+  "hrp": "glt",
+  "name": "GlobalToken",
+  "p2sh": 5,
+  "pub": 38,
+  "sources": [
+   "pywallet"
+  ],
+  "wif": 166
+ },
+ "GRC": {
+  "bip44": 84,
+  "hrp": null,
+  "name": "Gridcoin",
+  "p2sh": 85,
+  "pub": 62,
+  "sources": [
+   "hdwallet"
+  ],
+  "wif": 190
+ },
+ "GRS": {
+  "bip44": 17,
+  "hrp": "grs",
+  "name": "Groestlcoin",
+  "p2sh": 5,
+  "pub": 36,
+  "sources": [
+   "pywallet",
+   "hdwallet",
+   "coininfo"
+  ],
+  "wif": 128
+ },
+ "HNC": {
+  "bip44": 168,
+  "hrp": null,
+  "name": "Helleniccoin",
+  "p2sh": 5,
+  "pub": 48,
+  "sources": [
+   "hdwallet"
+  ],
+  "wif": 176
+ },
+ "HUSH": {
+  "bip44": 197,
+  "hrp": null,
+  "name": "Hush",
+  "p2sh": 7357,
+  "pub": 7352,
+  "sources": [
+   "hdwallet"
+  ],
+  "wif": 128
+ },
+ "INSN": {
+  "bip44": 68,
+  "hrp": null,
+  "name": "Insane Coin",
+  "p2sh": 57,
+  "pub": 102,
+  "sources": [
+   "hdwallet"
+  ],
+  "wif": 55
+ },
+ "ION": {
+  "bip44": null,
+  "hrp": null,
+  "name": "ION",
+  "p2sh": 96,
+  "pub": 102,
+  "sources": [
+   "pywallet"
+  ],
+  "wif": 230
+ },
+ "IOP": {
+  "bip44": 66,
+  "hrp": null,
+  "name": "Internet Of People",
+  "p2sh": 174,
+  "pub": 117,
+  "sources": [
+   "hdwallet"
+  ],
+  "wif": 49
+ },
+ "IXC": {
+  "bip44": 86,
+  "hrp": null,
+  "name": "Ixcoin",
+  "p2sh": 5,
+  "pub": 138,
+  "sources": [
+   "pywallet",
+   "hdwallet"
+  ],
+  "wif": 128
+ },
+ "JBS": {
+  "bip44": 26,
+  "hrp": null,
+  "name": "Jumbucks",
+  "p2sh": 5,
+  "pub": 43,
+  "sources": [
+   "hdwallet"
+  ],
+  "wif": 171
+ },
+ "KMD": {
+  "bip44": 141,
+  "hrp": null,
+  "name": "Komodo",
+  "p2sh": 85,
+  "pub": 60,
+  "sources": [
+   "pywallet",
+   "hdwallet"
+  ],
+  "wif": 188
+ },
+ "KOBO": {
+  "bip44": 196,
+  "hrp": null,
+  "name": "Kobocoin",
+  "p2sh": 28,
+  "pub": 35,
+  "sources": [
+   "hdwallet"
+  ],
+  "wif": 163
+ },
+ "LBC": {
+  "bip44": 140,
+  "disputed": true,
+  "hrp": null,
+  "name": "LBRY Credits",
+  "p2sh": 122,
+  "pub": 85,
+  "sources": [
+   "pywallet",
+   "hdwallet"
+  ],
+  "wif": 213,
+  "wif_alternatives": [
+   28
+  ]
+ },
+ "LCC": {
+  "bip44": 192,
+  "disputed": true,
+  "hrp": null,
+  "name": "Litecoin Cash",
+  "p2sh": 5,
+  "pub": 28,
+  "sources": [
+   "pywallet",
+   "hdwallet"
+  ],
+  "wif": 156,
+  "wif_alternatives": [
+   176
+  ]
+ },
+ "LINX": {
+  "bip44": 114,
+  "hrp": null,
+  "name": "Linx",
+  "p2sh": 5,
+  "pub": 75,
+  "sources": [
+   "hdwallet"
+  ],
+  "wif": 203
+ },
+ "LKR": {
+  "bip44": 557,
+  "hrp": null,
+  "name": "Lkrcoin",
+  "p2sh": 85,
+  "pub": 48,
+  "sources": [
+   "hdwallet"
+  ],
+  "wif": 176
+ },
+ "LTC": {
+  "bip44": 2,
+  "hrp": "ltc",
+  "name": "Litecoin",
+  "p2sh": 50,
+  "pub": 48,
+  "sources": [
+   "pywallet",
+   "hdwallet",
+   "coininfo"
+  ],
+  "wif": 176
+ },
+ "LTZ": {
+  "bip44": 221,
+  "hrp": null,
+  "name": "LitecoinZ",
+  "p2sh": 2744,
+  "pub": 2739,
+  "sources": [
+   "hdwallet"
+  ],
+  "wif": 128
+ },
+ "LYNX": {
+  "bip44": 191,
+  "hrp": null,
+  "name": "Lynx",
+  "p2sh": 50,
+  "pub": 45,
+  "sources": [
+   "hdwallet"
+  ],
+  "wif": 173
+ },
+ "MEC": {
+  "bip44": 217,
+  "hrp": null,
+  "name": "Megacoin",
+  "p2sh": 5,
+  "pub": 50,
+  "sources": [
+   "pywallet",
+   "hdwallet"
+  ],
+  "wif": 178
+ },
+ "MNX": {
+  "bip44": 182,
+  "hrp": null,
+  "name": "Minexcoin",
+  "p2sh": 5,
+  "pub": 75,
+  "sources": [
+   "hdwallet"
+  ],
+  "wif": 128
+ },
+ "MONA": {
+  "bip44": 22,
+  "corrected": "Monacoin SECRET_KEY=176, as Litecoin; we had 0xb2",
+  "hrp": "mona",
+  "name": "Monacoin",
+  "p2sh": 5,
+  "pub": 50,
+  "sources": [
+   "pywallet",
+   "hdwallet",
+   "coininfo"
+  ],
+  "wif": 176
+ },
+ "MONK": {
+  "bip44": 214,
+  "hrp": "monkey",
+  "name": "Monkey Project",
+  "p2sh": 28,
+  "pub": 51,
+  "sources": [
+   "hdwallet"
+  ],
+  "wif": 55
+ },
+ "MYR": {
+  "bip44": null,
+  "hrp": "my",
+  "name": "Myriadcoin",
+  "p2sh": 9,
+  "pub": 50,
+  "sources": [
+   "pywallet"
+  ],
+  "wif": 178
+ },
+ "MZC": {
+  "bip44": 13,
+  "hrp": null,
+  "name": "Mazacoin",
+  "p2sh": 9,
+  "pub": 50,
+  "sources": [
+   "hdwallet"
+  ],
+  "wif": 224
+ },
+ "NAV": {
+  "bip44": 130,
+  "hrp": null,
+  "name": "Navcoin",
+  "p2sh": 85,
+  "pub": 53,
+  "sources": [
+   "hdwallet"
+  ],
+  "wif": 150
+ },
+ "NBT": {
+  "bip44": 12,
+  "hrp": null,
+  "name": "NuBits",
+  "p2sh": 26,
+  "pub": 25,
+  "sources": [
+   "hdwallet",
+   "coininfo"
+  ],
+  "wif": 150
+ },
+ "NEBL": {
+  "bip44": 146,
+  "hrp": null,
+  "name": "Neblio",
+  "p2sh": 112,
+  "pub": 53,
+  "sources": [
+   "hdwallet"
+  ],
+  "wif": 181
+ },
+ "NEOS": {
+  "bip44": 25,
+  "hrp": null,
+  "name": "Neoscoin",
+  "p2sh": 5,
+  "pub": 53,
+  "sources": [
+   "hdwallet"
+  ],
+  "wif": 177
+ },
+ "NIX": {
+  "bip44": 400,
+  "hrp": "nix",
+  "name": "NIX",
+  "p2sh": 53,
+  "pub": 38,
+  "sources": [
+   "hdwallet"
+  ],
+  "wif": 128
+ },
+ "NLG": {
+  "bip44": 87,
+  "disputed": true,
+  "hrp": null,
+  "name": "Gulden",
+  "p2sh": 98,
+  "pub": 38,
+  "sources": [
+   "pywallet",
+   "hdwallet"
+  ],
+  "wif": 166,
+  "wif_alternatives": [
+   98
+  ]
+ },
+ "NMC": {
+  "bip44": 7,
+  "hrp": null,
+  "name": "Namecoin",
+  "p2sh": 13,
+  "pub": 52,
+  "sources": [
+   "pywallet",
+   "hdwallet",
+   "coininfo"
+  ],
+  "verified_against": "hdwallet reports 0x80; coininfo and we both say 0xb4",
+  "wif": 180
+ },
+ "NRG": {
+  "bip44": 9797,
+  "hrp": null,
+  "name": "Energi",
+  "p2sh": 53,
+  "pub": 33,
+  "sources": [
+   "hdwallet"
+  ],
+  "wif": 106
+ },
+ "NRO": {
+  "bip44": 110,
+  "hrp": null,
+  "name": "Neurocoin",
+  "p2sh": 117,
+  "pub": 53,
+  "sources": [
+   "hdwallet"
+  ],
+  "wif": 181
+ },
+ "NSR": {
+  "bip44": 11,
+  "hrp": null,
+  "name": "NuShares",
+  "p2sh": 64,
+  "pub": 63,
+  "sources": [
+   "hdwallet"
+  ],
+  "wif": 149
+ },
+ "NVC": {
+  "bip44": 50,
+  "hrp": null,
+  "name": "Novacoin",
+  "p2sh": 20,
+  "pub": 8,
+  "sources": [
+   "pywallet",
+   "hdwallet"
+  ],
+  "wif": 136
+ },
+ "NYC": {
+  "bip44": 179,
+  "hrp": null,
+  "name": "New York Coin",
+  "p2sh": 22,
+  "pub": 60,
+  "sources": [
+   "hdwallet"
+  ],
+  "wif": 188
+ },
+ "OK": {
+  "bip44": 69,
+  "hrp": null,
+  "name": "OK Cash",
+  "p2sh": 28,
+  "pub": 55,
+  "sources": [
+   "hdwallet"
+  ],
+  "wif": 3
+ },
+ "OMNI": {
+  "bip44": 200,
+  "hrp": null,
+  "name": "Omni",
+  "p2sh": 5,
+  "pub": 0,
+  "sources": [
+   "hdwallet"
+  ],
+  "wif": 128
+ },
+ "ONION": {
+  "bip44": 305,
+  "hrp": "dpn",
+  "name": "Deep Onion",
+  "p2sh": 78,
+  "pub": 31,
+  "sources": [
+   "hdwallet"
+  ],
+  "wif": 159
+ },
+ "ONX": {
+  "bip44": 174,
+  "hrp": null,
+  "name": "Onix Coin",
+  "p2sh": 5,
+  "pub": 75,
+  "sources": [
+   "hdwallet"
+  ],
+  "wif": 203
+ },
+ "PHR": {
+  "bip44": 444,
+  "disputed": true,
+  "hrp": null,
+  "name": "Phore",
+  "p2sh": 13,
+  "pub": 55,
+  "sources": [
+   "pywallet",
+   "hdwallet"
+  ],
+  "wif": 183,
+  "wif_alternatives": [
+   212
+  ]
+ },
+ "PINK": {
+  "bip44": 117,
+  "hrp": null,
+  "name": "Pinkcoin",
+  "p2sh": 28,
+  "pub": 3,
+  "sources": [
+   "pywallet",
+   "hdwallet"
+  ],
+  "wif": 131
+ },
+ "PIVX": {
+  "bip44": 119,
+  "hrp": null,
+  "name": "PIVX",
+  "p2sh": 13,
+  "pub": 30,
+  "sources": [
+   "pywallet",
+   "hdwallet"
+  ],
+  "wif": 212
+ },
+ "POSW": {
+  "bip44": 47,
+  "hrp": null,
+  "name": "Posw Coin",
+  "p2sh": 85,
+  "pub": 55,
+  "sources": [
+   "hdwallet"
+  ],
+  "wif": 183
+ },
+ "POT": {
+  "bip44": 81,
+  "hrp": null,
+  "name": "Potcoin",
+  "p2sh": 5,
+  "pub": 55,
+  "sources": [
+   "pywallet",
+   "hdwallet"
+  ],
+  "wif": 183
+ },
+ "PPC": {
+  "bip44": 6,
+  "hrp": null,
+  "name": "Peercoin",
+  "p2sh": 117,
+  "pub": 55,
+  "sources": [
+   "pywallet",
+   "hdwallet",
+   "coininfo"
+  ],
+  "wif": 183
+ },
+ "PRJ": {
+  "bip44": 533,
+  "hrp": null,
+  "name": "Project Coin",
+  "p2sh": 8,
+  "pub": 55,
+  "sources": [
+   "hdwallet"
+  ],
+  "wif": 117
+ },
+ "PSB": {
+  "bip44": 62,
+  "hrp": null,
+  "name": "Pesobit",
+  "p2sh": 85,
+  "pub": 55,
+  "sources": [
+   "hdwallet"
+  ],
+  "wif": 183
+ },
+ "PUT": {
+  "bip44": 122,
+  "hrp": null,
+  "name": "Putincoin",
+  "p2sh": 20,
+  "pub": 55,
+  "sources": [
+   "hdwallet"
+  ],
+  "wif": 183
+ },
+ "QRK": {
+  "bip44": null,
+  "hrp": null,
+  "name": "Quarkcoin",
+  "p2sh": null,
+  "pub": 58,
+  "sources": [
+   "pywallet"
+  ],
+  "wif": 186
+ },
+ "QTUM": {
+  "bip44": 2301,
+  "hrp": "qc",
+  "name": "Qtum",
+  "p2sh": 50,
+  "pub": 58,
+  "sources": [
+   "pywallet",
+   "hdwallet",
+   "coininfo"
+  ],
+  "wif": 128
+ },
+ "RBTC": {
+  "bip44": 137,
+  "hrp": null,
+  "name": "RSK",
+  "p2sh": 5,
+  "pub": 0,
+  "sources": [
+   "hdwallet"
+  ],
+  "wif": 128
+ },
+ "RBY": {
+  "bip44": 16,
+  "hrp": null,
+  "name": "Rubycoin",
+  "p2sh": 85,
+  "pub": 60,
+  "sources": [
+   "hdwallet"
+  ],
+  "wif": 188
+ },
+ "RDD": {
+  "bip44": 4,
+  "hrp": null,
+  "name": "Reddcoin",
+  "p2sh": 5,
+  "pub": 61,
+  "sources": [
+   "pywallet",
+   "hdwallet",
+   "coininfo"
+  ],
+  "wif": 189
+ },
+ "RPD": {
+  "bip44": 320,
+  "hrp": null,
+  "name": "Rapids",
+  "p2sh": 6,
+  "pub": 61,
+  "sources": [
+   "hdwallet"
+  ],
+  "wif": 46
+ },
+ "RTM": {
+  "bip44": null,
+  "hrp": null,
+  "name": "Raptoreum",
+  "p2sh": 16,
+  "pub": 60,
+  "sources": [
+   "pywallet"
+  ],
+  "wif": 188
+ },
+ "RVN": {
+  "bip44": 175,
+  "hrp": "rc",
+  "name": "Ravencoin",
+  "p2sh": 122,
+  "pub": 60,
+  "sources": [
+   "pywallet",
+   "hdwallet",
+   "coininfo"
+  ],
+  "wif": 128
+ },
+ "RYO": {
+  "bip44": null,
+  "hrp": null,
+  "name": "c0ban",
+  "p2sh": 28,
+  "pub": 18,
+  "sources": [
+   "coininfo"
+  ],
+  "wif": 136
+ },
+ "SAFE": {
+  "bip44": 19165,
+  "hrp": null,
+  "name": "Safecoin",
+  "p2sh": 86,
+  "pub": 61,
+  "sources": [
+   "pywallet",
+   "hdwallet"
+  ],
+  "wif": 189
+ },
+ "SCRIBE": {
+  "bip44": 545,
+  "hrp": null,
+  "name": "Scribe",
+  "p2sh": 125,
+  "pub": 60,
+  "sources": [
+   "hdwallet"
+  ],
+  "wif": 110
+ },
+ "SDC": {
+  "bip44": 35,
+  "hrp": null,
+  "name": "Shadow Cash",
+  "p2sh": 125,
+  "pub": 63,
+  "sources": [
+   "hdwallet"
+  ],
+  "wif": 191
+ },
+ "SIB": {
+  "bip44": null,
+  "hrp": null,
+  "name": "SIBCoin",
+  "p2sh": 40,
+  "pub": 63,
+  "sources": [
+   "pywallet"
+  ],
+  "wif": 191
+ },
+ "SLM": {
+  "bip44": 63,
+  "hrp": null,
+  "name": "Slimcoin",
+  "p2sh": 125,
+  "pub": 63,
+  "sources": [
+   "hdwallet"
+  ],
+  "wif": 70
+ },
+ "SLR": {
+  "bip44": 58,
+  "hrp": null,
+  "name": "Solarcoin",
+  "p2sh": 5,
+  "pub": 18,
+  "sources": [
+   "hdwallet"
+  ],
+  "wif": 146
+ },
+ "SLS": {
+  "bip44": 572,
+  "hrp": null,
+  "name": "Saluscoin",
+  "p2sh": 196,
+  "pub": 63,
+  "sources": [
+   "hdwallet"
+  ],
+  "wif": 191
+ },
+ "SMART": {
+  "bip44": null,
+  "hrp": null,
+  "name": "SmartCash",
+  "p2sh": 18,
+  "pub": 63,
+  "sources": [
+   "pywallet"
+  ],
+  "wif": 191
+ },
+ "SMLY": {
+  "bip44": 59,
+  "hrp": null,
+  "name": "Smileycoin",
+  "p2sh": 5,
+  "pub": 25,
+  "sources": [
+   "hdwallet"
+  ],
+  "wif": 5
+ },
+ "STASH": {
+  "bip44": 49344,
+  "hrp": null,
+  "name": "Stash",
+  "p2sh": 16,
+  "pub": 76,
+  "sources": [
+   "hdwallet"
+  ],
+  "wif": 204
+ },
+ "STRAT": {
+  "bip44": 105,
+  "hrp": null,
+  "name": "Stratis",
+  "p2sh": 125,
+  "pub": 63,
+  "sources": [
+   "hdwallet"
+  ],
+  "wif": 191
+ },
+ "SUGAR": {
+  "bip44": 408,
+  "hrp": "sugar",
+  "name": "Sugarchain",
+  "p2sh": 125,
+  "pub": 63,
+  "sources": [
+   "hdwallet"
+  ],
+  "wif": 128
+ },
+ "SYS": {
+  "bip44": 57,
+  "disputed": true,
+  "hrp": "sys",
+  "name": "Syscoin",
+  "p2sh": 5,
+  "pub": 63,
+  "sources": [
+   "pywallet",
+   "hdwallet"
+  ],
+  "wif": 191,
+  "wif_alternatives": [
+   128
+  ]
+ },
+ "TBTC": {
+  "bip44": null,
+  "hrp": "tb",
+  "name": "Bitcoin Testnet",
+  "p2sh": 196,
+  "pub": 111,
+  "sources": [
+   "pywallet"
+  ],
+  "wif": 239
+ },
+ "THC": {
+  "bip44": 113,
+  "hrp": null,
+  "name": "Hempcoin",
+  "p2sh": 8,
+  "pub": 40,
+  "sources": [
+   "hdwallet"
+  ],
+  "wif": 168
+ },
+ "THT": {
+  "bip44": 502,
+  "hrp": null,
+  "name": "Thought AI",
+  "p2sh": 9,
+  "pub": 7,
+  "sources": [
+   "hdwallet"
+  ],
+  "wif": 123
+ },
+ "TLTC": {
+  "bip44": null,
+  "hrp": "tltc",
+  "name": "Litecoin Testnet",
+  "p2sh": 58,
+  "pub": 111,
+  "sources": [
+   "pywallet"
+  ],
+  "wif": 239
+ },
+ "TOA": {
+  "bip44": 159,
+  "hrp": null,
+  "name": "TOA Coin",
+  "p2sh": 23,
+  "pub": 65,
+  "sources": [
+   "hdwallet"
+  ],
+  "wif": 193
+ },
+ "TRX": {
+  "bip44": 195,
+  "hrp": "bc",
+  "name": "Tron",
+  "p2sh": 5,
+  "pub": 65,
+  "sources": [
+   "hdwallet"
+  ],
+  "wif": 128
+ },
+ "TWINS": {
+  "bip44": 970,
+  "hrp": null,
+  "name": "Twins",
+  "p2sh": 83,
+  "pub": 73,
+  "sources": [
+   "hdwallet"
+  ],
+  "wif": 66
+ },
+ "UNO": {
+  "bip44": 92,
+  "hrp": null,
+  "name": "Unobtanium",
+  "p2sh": 30,
+  "pub": 130,
+  "sources": [
+   "pywallet",
+   "hdwallet"
+  ],
+  "wif": 224
+ },
+ "USC": {
+  "bip44": 112,
+  "hrp": null,
+  "name": "Ultimate Secure Cash",
+  "p2sh": 125,
+  "pub": 68,
+  "sources": [
+   "hdwallet"
+  ],
+  "wif": 191
+ },
+ "VASH": {
+  "bip44": 33,
+  "hrp": null,
+  "name": "Virtual Cash",
+  "p2sh": 5,
+  "pub": 71,
+  "sources": [
+   "hdwallet"
+  ],
+  "wif": 199
+ },
+ "VC": {
+  "bip44": 127,
+  "hrp": null,
+  "name": "Vcash",
+  "p2sh": 8,
+  "pub": 71,
+  "sources": [
+   "hdwallet"
+  ],
+  "wif": 199
+ },
+ "VIA": {
+  "bip44": 14,
+  "hrp": "via",
+  "name": "Viacoin",
+  "p2sh": 33,
+  "pub": 71,
+  "sources": [
+   "pywallet",
+   "hdwallet",
+   "coininfo"
+  ],
+  "wif": 199
+ },
+ "VIVO": {
+  "bip44": 166,
+  "hrp": null,
+  "name": "Vivo",
+  "p2sh": 10,
+  "pub": 70,
+  "sources": [
+   "hdwallet"
+  ],
+  "wif": 198
+ },
+ "VRC": {
+  "bip44": null,
+  "hrp": null,
+  "name": "Vericoin",
+  "p2sh": null,
+  "pub": 70,
+  "sources": [
+   "pywallet"
+  ],
+  "wif": 198
+ },
+ "VTC": {
+  "bip44": 28,
+  "corrected": "Vertcoin SECRET_KEY=128; we had 0xc7",
+  "hrp": "vtc",
+  "name": "Vertcoin",
+  "p2sh": 5,
+  "pub": 71,
+  "sources": [
+   "pywallet",
+   "hdwallet",
+   "coininfo"
+  ],
+  "wif": 128
+ },
+ "WC": {
+  "bip44": 181,
+  "hrp": null,
+  "name": "Wincoin",
+  "p2sh": 28,
+  "pub": 73,
+  "sources": [
+   "hdwallet"
+  ],
+  "wif": 201
+ },
+ "WGR": {
+  "bip44": null,
+  "hrp": null,
+  "name": "Wagerr",
+  "p2sh": 63,
+  "pub": 73,
+  "sources": [
+   "pywallet"
+  ],
+  "wif": 201
+ },
+ "XAX": {
+  "bip44": 219,
+  "hrp": null,
+  "name": "Artax",
+  "p2sh": 7357,
+  "pub": 23,
+  "sources": [
+   "hdwallet"
+  ],
+  "wif": 151
+ },
+ "XBC": {
+  "bip44": 65,
+  "hrp": null,
+  "name": "Bitcoin Plus",
+  "p2sh": 8,
+  "pub": 25,
+  "sources": [
+   "hdwallet"
+  ],
+  "wif": 153
+ },
+ "XDC": {
+  "bip44": 550,
+  "hrp": "bc",
+  "name": "XinFin",
+  "p2sh": 5,
+  "pub": 0,
+  "sources": [
+   "hdwallet"
+  ],
+  "wif": 128
+ },
+ "XMY": {
+  "bip44": 90,
+  "hrp": "my",
+  "name": "Myriadcoin",
+  "p2sh": 9,
+  "pub": 50,
+  "sources": [
+   "pywallet",
+   "hdwallet"
+  ],
+  "wif": 178
+ },
+ "XPM": {
+  "bip44": null,
+  "hrp": null,
+  "name": "Primecoin",
+  "p2sh": 83,
+  "pub": 23,
+  "sources": [
+   "pywallet"
+  ],
+  "wif": 151
+ },
+ "XSH": {
+  "bip44": null,
+  "hrp": null,
+  "name": "Shield",
+  "p2sh": 18,
+  "pub": 63,
+  "sources": [
+   "pywallet"
+  ],
+  "wif": 191
+ },
+ "XUEZ": {
+  "bip44": 225,
+  "hrp": null,
+  "name": "XUEZ",
+  "p2sh": 18,
+  "pub": 75,
+  "sources": [
+   "hdwallet"
+  ],
+  "wif": 212
+ },
+ "XVG": {
+  "bip44": 77,
+  "hrp": null,
+  "name": "Verge",
+  "p2sh": 33,
+  "pub": 30,
+  "sources": [
+   "pywallet",
+   "hdwallet"
+  ],
+  "wif": 158
+ },
+ "XWC": {
+  "bip44": 559,
+  "hrp": null,
+  "name": "Whitecoin",
+  "p2sh": 87,
+  "pub": 73,
+  "sources": [
+   "hdwallet"
+  ],
+  "wif": 201
+ },
+ "XZC": {
+  "bip44": null,
+  "hrp": null,
+  "name": "Zcoin",
+  "p2sh": 7,
+  "pub": 82,
+  "sources": [
+   "pywallet"
+  ],
+  "wif": 210
+ },
+ "YEC": {
+  "bip44": 347,
+  "hrp": null,
+  "name": "Ycash",
+  "p2sh": 7212,
+  "pub": 7208,
+  "sources": [
+   "hdwallet"
+  ],
+  "wif": 128
+ },
+ "ZCL": {
+  "bip44": 147,
+  "hrp": null,
+  "name": "ZClassic",
+  "p2sh": 7357,
+  "pub": 7352,
+  "sources": [
+   "hdwallet"
+  ],
+  "wif": 128
+ },
+ "ZEC": {
+  "bip44": 133,
+  "hrp": null,
+  "name": "Zcash",
+  "p2sh": 7357,
+  "pub": 7352,
+  "sources": [
+   "hdwallet",
+   "coininfo"
+  ],
+  "wif": 128
+ },
+ "ZEN": {
+  "bip44": 121,
+  "hrp": null,
+  "name": "Zencash",
+  "p2sh": 8342,
+  "pub": 8329,
+  "sources": [
+   "hdwallet"
+  ],
+  "wif": 128
+ },
+ "x42": {
+  "bip44": null,
+  "hrp": null,
+  "name": "x42",
+  "p2sh": 125,
+  "pub": 75,
+  "sources": [
+   "coininfo"
+  ],
+  "wif": 203
+ }
+}
