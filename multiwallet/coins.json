@@ -217,6 +217,7 @@
   "hrp": "bc",
   "name": "Bitcoin",
   "p2sh": 5,
+  "provenance_note": "verified against chainparams.cpp",
   "pub": 0,
   "sources": [
    "pywallet",
@@ -253,6 +254,7 @@
   "hrp": "btg",
   "name": "Bitcoin Gold",
   "p2sh": 23,
+  "provenance_note": "verified against chainparams.cpp",
   "pub": 38,
   "sources": [
    "pywallet",
@@ -263,19 +265,16 @@
  },
  "BTX": {
   "bip44": 160,
-  "disputed": true,
   "hrp": "btx",
   "name": "Bitcore",
   "p2sh": 8,
+  "provenance_note": "verified against chainparams.cpp",
   "pub": 3,
   "sources": [
    "pywallet",
    "hdwallet"
   ],
-  "wif": 131,
-  "wif_alternatives": [
-   128
-  ]
+  "wif": 128
  },
  "CANN": {
   "bip44": null,
@@ -404,6 +403,7 @@
   "hrp": null,
   "name": "Dash",
   "p2sh": 16,
+  "provenance_note": "verified against chainparams.cpp",
   "pub": 76,
   "sources": [
    "pywallet",
@@ -440,6 +440,7 @@
   "hrp": "dgb",
   "name": "DigiByte",
   "p2sh": 63,
+  "provenance_note": "verified against chainparams.cpp",
   "pub": 30,
   "sources": [
    "pywallet",
@@ -489,6 +490,7 @@
   "hrp": null,
   "name": "Dogecoin",
   "p2sh": 22,
+  "provenance_note": "verified against chainparams.cpp",
   "pub": 30,
   "sources": [
    "pywallet",
@@ -725,6 +727,7 @@
   "hrp": "grs",
   "name": "Groestlcoin",
   "p2sh": 5,
+  "provenance_note": "verified against chainparams.cpp",
   "pub": 36,
   "sources": [
    "pywallet",
@@ -836,35 +839,29 @@
  },
  "LBC": {
   "bip44": 140,
-  "disputed": true,
   "hrp": null,
   "name": "LBRY Credits",
   "p2sh": 122,
+  "provenance_note": "verified against chainparams.cpp",
   "pub": 85,
   "sources": [
    "pywallet",
    "hdwallet"
   ],
-  "wif": 213,
-  "wif_alternatives": [
-   28
-  ]
+  "wif": 28
  },
  "LCC": {
   "bip44": 192,
-  "disputed": true,
   "hrp": null,
   "name": "Litecoin Cash",
   "p2sh": 5,
+  "provenance_note": "verified against chainparams.cpp",
   "pub": 28,
   "sources": [
    "pywallet",
    "hdwallet"
   ],
-  "wif": 156,
-  "wif_alternatives": [
-   176
-  ]
+  "wif": 176
  },
  "LINX": {
   "bip44": 114,
@@ -893,6 +890,7 @@
   "hrp": "ltc",
   "name": "Litecoin",
   "p2sh": 50,
+  "provenance_note": "verified against chainparams.cpp",
   "pub": 48,
   "sources": [
    "pywallet",
@@ -952,6 +950,7 @@
   "hrp": "mona",
   "name": "Monacoin",
   "p2sh": 5,
+  "provenance_note": "verified against chainparams.cpp",
   "pub": 50,
   "sources": [
    "pywallet",
@@ -1051,25 +1050,23 @@
  },
  "NLG": {
   "bip44": 87,
-  "disputed": true,
   "hrp": null,
   "name": "Gulden",
   "p2sh": 98,
+  "provenance_note": "verified against chainparams.cpp",
   "pub": 38,
   "sources": [
    "pywallet",
    "hdwallet"
   ],
-  "wif": 166,
-  "wif_alternatives": [
-   98
-  ]
+  "wif": 166
  },
  "NMC": {
   "bip44": 7,
   "hrp": null,
   "name": "Namecoin",
   "p2sh": 13,
+  "provenance_note": "verified against chainparams.cpp",
   "pub": 52,
   "sources": [
    "pywallet",
@@ -1181,19 +1178,16 @@
  },
  "PHR": {
   "bip44": 444,
-  "disputed": true,
   "hrp": null,
   "name": "Phore",
   "p2sh": 13,
+  "provenance_note": "verified against chainparams.cpp",
   "pub": 55,
   "sources": [
    "pywallet",
    "hdwallet"
   ],
-  "wif": 183,
-  "wif_alternatives": [
-   212
-  ]
+  "wif": 212
  },
  "PINK": {
   "bip44": 117,
@@ -1212,6 +1206,7 @@
   "hrp": null,
   "name": "PIVX",
   "p2sh": 13,
+  "provenance_note": "verified against chainparams.cpp",
   "pub": 30,
   "sources": [
    "pywallet",
@@ -1304,6 +1299,7 @@
   "hrp": "qc",
   "name": "Qtum",
   "p2sh": 50,
+  "provenance_note": "verified against chainparams.cpp",
   "pub": 58,
   "sources": [
    "pywallet",
@@ -1374,6 +1370,7 @@
   "hrp": "rc",
   "name": "Ravencoin",
   "p2sh": 122,
+  "provenance_note": "verified against chainparams.cpp",
   "pub": 60,
   "sources": [
    "pywallet",
@@ -1528,19 +1525,16 @@
  },
  "SYS": {
   "bip44": 57,
-  "disputed": true,
   "hrp": "sys",
   "name": "Syscoin",
   "p2sh": 5,
+  "provenance_note": "verified against chainparams.cpp",
   "pub": 63,
   "sources": [
    "pywallet",
    "hdwallet"
   ],
-  "wif": 191,
-  "wif_alternatives": [
-   128
-  ]
+  "wif": 128
  },
  "TBTC": {
   "bip44": null,
@@ -1705,6 +1699,7 @@
   "hrp": "vtc",
   "name": "Vertcoin",
   "p2sh": 5,
+  "provenance_note": "verified against chainparams.cpp",
   "pub": 71,
   "sources": [
    "pywallet",
@@ -1874,6 +1869,7 @@
   "hrp": null,
   "name": "Zcash",
   "p2sh": 7357,
+  "provenance_note": "verified against chainparams.cpp",
   "pub": 7352,
   "sources": [
    "hdwallet",
@@ -1886,6 +1882,7 @@
   "hrp": null,
   "name": "Zencash",
   "p2sh": 8342,
+  "provenance_note": "verified against chainparams.cpp",
   "pub": 8329,
   "sources": [
    "hdwallet"

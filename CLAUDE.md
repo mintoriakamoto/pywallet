@@ -14,7 +14,7 @@ Berkeley DB `wallet.dat` files:
 
 There is **no build system, no CI, no linter config, and no packaging
 metadata** in this repo. `multiwallet/requirements.txt` is the only dependency
-declaration. Tests exist for the Python 3 side only (`tests/`, run with
+declaration. Tests exist for the Python 3 side only (`tests/`, 97 tests, run with
 `python3 -m pytest tests/ -q`) and nothing runs them automatically.
 
 ## ⚠️ The single most important fact: the Python 2 / Python 3 split
@@ -96,6 +96,7 @@ multiwallet/
 ├── wallet_session.py     # WalletSession: one wallet.dat, change-address pool
 └── templates/index.html  # 700-line vanilla-JS SPA, dark theme, no build step
 tools/build_coin_table.py # regenerates coins.json from 3 sources
+tools/verify_from_chainparams.py # checks bytes against each coin's own source
 tests/                    # pytest, Python 3 only, no wallet.dat or network
 ```
 
@@ -121,8 +122,14 @@ coins), and the **coininfo** npm package (24 coins, each citing the coin's own
 `chainparams.cpp`). Regenerate rather than hand-editing:
 
 ```bash
-python3 tools/build_coin_table.py     # needs pypi.org + registry.npmjs.org
+python3 tools/build_coin_table.py            # merge 3 sources -> coins.json
+python3 tools/verify_from_chainparams.py --apply   # then check against source
 ```
+
+**Run them in that order.** `build_coin_table.py` rewrites `coins.json` from
+scratch and does not know about the `provenance_note` markers that
+`verify_from_chainparams.py` writes, so regenerating without re-verifying
+silently drops them.
 
 Two smaller tables remain and still need manual care:
 
@@ -135,15 +142,37 @@ Two smaller tables remain and still need manual care:
 `COIN_PARAMS` feeds the generator, so **corrections still start there**; the
 Py2 CLI reads nothing else. `STATIC_COIN_PARAMS` is a degraded fallback only.
 
-**Conflict policy.** The generator changes a value only when *two independent
-sources agree against us*; a lone disagreement is recorded as
-`"disputed": true` with both candidates in `wif_alternatives`, and the registry
-then reports the coin as unverified rather than picking a winner. Four WIF
-bytes were corrected this way (BTG, DGB, MONA, VTC — all had `pubkey+0x80`
-wrongly applied) and two were confirmed *ours* against a bad third-party value
-(DOGE, where hdwallet carries a testnet byte; NMC). Six remain disputed: BTX,
-LBC, LCC, NLG, PHR, SYS. See `OVERRIDES` / `KNOWN_GOOD` in the generator for
-the reasoning — never silently resolve one of these.
+**Conflict policy.** Aggregators disagree, so the merge only changes a value
+when *two independent sources agree against us*; a lone disagreement becomes
+`"disputed": true` carrying both candidates in `wif_alternatives`, and the
+registry reports that coin as unverified rather than picking a winner.
+
+The tie-breaker above all of them is the coin's **own `chainparams.cpp`**,
+which `verify_from_chainparams.py` reads from each project's GitHub repo. It
+settled all six former disputes and set `source_verified` on 21 coins. Nine WIF
+bytes turned out to be wrong in both of our tables — all of them the
+`pubkey+0x80` convention applied to coins that don't follow it:
+
+| | BTG | BTX | DGB | LBC | LCC | MONA | PHR | SYS | VTC |
+|---|---|---|---|---|---|---|---|---|---|
+| was | a6 | 83 | 9e | d5 | 9c | b2 | b7 | bf | c7 |
+| **is** | **80** | **80** | **80** | **1c** | **b0** | **b0** | **d4** | **80** | **80** |
+
+Three values were confirmed *ours* against a bad third-party value: DOGE
+(hdwallet carries the testnet byte `0xf1`), NMC, and NLG (Gulden's source
+literally writes `std::vector<unsigned char>(1, 38+128)`).
+
+Two traps that cost real debugging here, both encoded in the tool:
+
+* **Never parse outside `CMainParams`.** Reading the whole file picks up
+  testnet values — that is precisely how hdwallet got DOGE wrong.
+* Bitcoin Core moved `CMainParams` to `src/kernel/chainparams.cpp` in v24, so
+  forks rebased on modern Core leave a stub at the classic path. Fetch
+  candidates until one actually contains the class; the first HTTP 200 lies.
+
+To add a coin to the verifier, put its `owner/repo` in `REPOS`. Do not guess a
+repo — verifying against the wrong project's parameters is worse than not
+verifying at all.
 
 **Provenance.** Every `CoinInfo` carries `provenance` (`node` > `manual` >
 `table` > `guessed` > `default`) and a `verified` flag. Unknown coins can be
@@ -216,7 +245,7 @@ maps those to status codes. Preserve that layering.
 * `multiwallet/__pycache__/` is checked in and there is no `.gitignore`. Don't
   add new `.pyc` files to commits; adding a `.gitignore` is a reasonable
   cleanup if asked.
-* Tests live in `tests/` (89 tests, `python3 -m pytest tests/ -q`); there is no CI
+* Tests live in `tests/` (97 tests, `python3 -m pytest tests/ -q`); there is no CI
   to run them. If you change parsing or address-encoding logic, say
   explicitly in your report that it is unverified, or add a test that can run
   under Python 3 without a real `wallet.dat`.

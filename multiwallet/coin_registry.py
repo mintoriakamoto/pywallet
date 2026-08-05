@@ -153,6 +153,7 @@ class CoinInfo:
         provenance: str = PROVENANCE_TABLE,
         disputed: bool = False,
         wif_alternatives: Optional[List[int]] = None,
+        source_verified: bool = False,
         **extra: Any,
     ):
         self.ticker = ticker
@@ -166,6 +167,9 @@ class CoinInfo:
         self.provenance = provenance
         self.disputed = disputed
         self.wif_alternatives = list(wif_alternatives or [])
+        #: True when these bytes were read from the coin's own chainparams.cpp
+        #: — the strongest evidence available, stronger than any aggregator.
+        self.source_verified = source_verified
         self.extra = extra  # live stats from miningpoolstats
 
     @property
@@ -215,6 +219,7 @@ class CoinInfo:
             "provenance": self.provenance,
             "verified": self.verified,
             "disputed": self.disputed,
+            "source_verified": self.source_verified,
             "wif_candidates": self.wif_candidates,
             "multibyte_prefix": len(self.pubkey_version_bytes) > 1,
         }
@@ -402,6 +407,7 @@ class CoinRegistry:
                     provenance=PROVENANCE_TABLE,
                     disputed=bool(c.get("disputed")),
                     wif_alternatives=c.get("wif_alternatives"),
+                    source_verified=bool(c.get("provenance_note")),
                 )
             except (KeyError, TypeError) as exc:
                 logger.warning("CoinRegistry: skipping malformed coin %s: %s", ticker, exc)

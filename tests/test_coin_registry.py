@@ -240,14 +240,44 @@ def test_majority_corrections_applied(registry, ticker, wif_ver):
     assert registry.get(ticker).wif_ver == wif_ver
 
 
-@pytest.mark.parametrize("ticker", ["BTX", "LBC", "LCC", "NLG", "PHR", "SYS"])
-def test_disputed_coins_are_flagged_not_silently_picked(registry, ticker):
+@pytest.mark.parametrize("ticker,wif_ver", [
+    ("BTX", 0x80),  # was 0x83
+    ("LBC", 0x1c),  # was 0xd5
+    ("LCC", 0xb0),  # was 0x9c
+    ("PHR", 0xd4),  # was 0xb7
+    ("SYS", 0x80),  # was 0xbf
+    ("NLG", 0xa6),  # ours confirmed: Gulden literally writes (1, 38+128)
+])
+def test_disputes_settled_against_chainparams(registry, ticker, wif_ver):
+    """
+    Every previously disputed coin was resolved by reading its own
+    chainparams.cpp, so none should remain flagged.
+    """
     coin = registry.get(ticker)
-    assert coin.disputed is True
+    assert coin.wif_ver == wif_ver
+    assert coin.disputed is False
+    assert coin.source_verified is True
+    assert coin.verified is True
+
+
+def test_no_coin_is_left_disputed(registry):
+    assert [t for t, c in registry.all().items() if c.disputed] == []
+
+
+@pytest.mark.parametrize("ticker", ["BTC", "LTC", "DOGE", "ZEC", "ZEN", "VTC"])
+def test_source_verified_flag_is_exposed(registry, ticker):
+    assert registry.get(ticker).to_dict()["source_verified"] is True
+
+
+def test_disputed_coin_would_be_unverified():
+    """The disputed machinery still works even though no coin uses it now."""
+    coin = CoinInfo(
+        ticker="X", name="X", pubkey_ver=0x30, wif_ver=0xB0, p2sh_ver=None,
+        bech32_hrp=None, bip44_index=None, disputed=True,
+        wif_alternatives=[0x80],
+    )
     assert coin.verified is False
-    # Both candidates are offered so a rejected import can be retried.
-    assert len(coin.wif_candidates) >= 2
-    assert coin.to_dict()["disputed"] is True
+    assert coin.wif_candidates == [0xB0, 0x80]
 
 
 @pytest.mark.parametrize("ticker,pubkey_ver", [
